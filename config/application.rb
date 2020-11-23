@@ -15,5 +15,12 @@ module AliWebsite
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    config.active_record.schema_format = :sql
+
+
+    #config.google_client_id = ENV['GOOGLE_CLIENT_ID']
+    #config.google_client_secret = ENV['GOOGLE_CLIENT_SECRET']
+    config.google_api_key = ENV['GOOGLE_API_KEY']
   end
 end

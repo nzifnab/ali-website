@@ -1,0 +1,78 @@
+
+
+$white: white;
+$black: black;
+$gray: #35373f;
+.navbar-brand {
+  display: inline-block;
+  padding: 1.5rem 0rem 1.5rem 6rem;
+  background-image: asset_url('ali_icon.jpg');
+  background-position: top left;
+  background-origin: padding-box;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.navbar-dark{
+  background-color: #0a5574;
+  color: white;
+  .navbar-nav .nav-link {
+    color: white;
+  }
+
+  .navbar-brand {
+    &:hover, &:focus {
+      color: rgba(255,255,255, 0.5);
+    }
+  }
+}
+.navbar {
+  font-size: 1.2rem;
+}
+
+
+body {
+  background: $black;
+  color: $white;
+  font-family: 'Merriweather', sans-serif;
+}
+h1,
+h2 {
+  font-weight: bold;
+}
+p {
+  font-size: 16px;
+  color: $white;
+}
+.jumbotron {
+  background: $gray;
+  color: $white;
+  text-align: center;
+  p {
+    color: $white;
+    font-size: 26px;
+  }
+}
+.link {
+  color: $white;
+}
+.btn-primary {
+  color: $white;
+  border-color: $white;
+  margin-bottom: 5px;
+}
+.btn-small {
+  background-color: $white;
+  display: inline-block;
+}
+img,
+video,
+audio {
+  margin-top: 20px;
+  max-width: 80%;
+}
+caption {
+
+  float: left;
+  clear: both;
+
+}

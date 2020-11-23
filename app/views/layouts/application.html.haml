@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1.0"}
+    %title= content_for?(:title) ? yield(:title) : "Ascended Lunar Isle"
+    %meta{name: "description", content: content_for?(:description) ? yield(:description) : "Ascended Lunar Isle - An Eve Echoes Nullsec Industrial Corporation"}
+    = csrf_meta_tags
+    = csp_meta_tag
+    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+  %body
+    %header
+      = render 'layouts/navigation'
+
+    %main{role: "main"}
+      = content_for?(:content) ? yield(:content) : yield
