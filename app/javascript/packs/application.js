@@ -3,10 +3,18 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
-require("@rails/ujs").start()
-require("turbolinks").start()
+require("@rails/ujs").start;
+require("turbolinks").start();
 // require("@rails/activestorage").start()
-require("channels")
+require("channels");
+const jQuery = require("jquery");
+window.jQuery = jQuery;
+window.$ = jQuery;
+// Datatables Core
+require('datatables.net')
+// Datatables Bootstrap 4
+require('datatables.net-bs4/js/dataTables.bootstrap4.js')
+require('datatables.net-bs4/css/dataTables.bootstrap4.css')
 
 
 // Uncomment to copy all static images under ../images to the output folder and reference
@@ -18,3 +26,5 @@ require("channels")
 
 import "bootstrap"
 import "../stylesheets/application"
+
+require("ali_website");

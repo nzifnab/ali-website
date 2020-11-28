@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  item: MyText
+  type: MyText
+  price_updated_at: 2020-11-27 14:35:22
+  external_sale_price: 9.99
+  desired_stock: 
+  current_stock: 
+  corp_member_sale_price: 9.99
+  buy_price: 9.99
+
+two:
+  item: MyText
+  type: MyText
+  price_updated_at: 2020-11-27 14:35:22
+  external_sale_price: 9.99
+  desired_stock: 
+  current_stock: 
+  corp_member_sale_price: 9.99
+  buy_price: 9.99

@@ -1,0 +1,10 @@
+- flash.each do |type, msg|
+  %div{class: type}
+    = msg
+
+Guess a number between 1 and 10
+%br
+= form_with url: '/guess', local: true do
+  = hidden_field_tag 'answer', @num
+  = text_field_tag 'num'
+  = submit_tag "Guess"

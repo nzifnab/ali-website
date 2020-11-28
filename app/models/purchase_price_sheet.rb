@@ -2,6 +2,10 @@ class PurchasePriceSheet < GoogleSheet
 
   SHEET_ID = "1vsYPArvK-5Ah0mIVQIa9MnMk5EQFian6xrghUSEKF4s".freeze
 
+  def self.data
+    new.data
+  end
+
   def initialize
     super(SHEET_ID)
   end

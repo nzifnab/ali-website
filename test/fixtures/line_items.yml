@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  corp_stock_id: one
+  quantity: 
+  price: 9.99
+
+two:
+  corp_stock_id: two
+  quantity: 
+  price: 9.99

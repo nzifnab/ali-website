@@ -22,7 +22,7 @@ class GoogleSheet
   end
 
   def spreadsheet
-    spreadsheet_service.get_spreadsheet(@sheet_id)
+    @spreadsheet ||= spreadsheet_service.get_spreadsheet(@sheet_id)
   end
 
   def named_range(range_name)
@@ -34,18 +34,36 @@ class GoogleSheet
   end
 end
 
+module NamedRangeFix
+  def named_ranges
+    rngs = super
+    rngs.each do |rng|
+      rng.range.sheet_name = sheets.find{|sh| sh.properties.sheet_id == rng.range.sheet_id}&.properties&.title
+    end
+    rngs
+  end
+end
+
 module Google
   module Apis
     module SheetsV4
+      class Spreadsheet
+        prepend NamedRangeFix
+      end
+
       class GridRange
+        attr_accessor :sheet_name
         # Google API is so freaking dumb.
         # has props:
         # end_column_index
         # end_row_index
         # start_column_index
         # start_row_index
+        #
+        # We've monkey-patched in the sheet name so we can calculate
+        # proper A1 notation but it's kinda a mess :P
         def to_a1_notation
-          notation = ""
+          notation = "#{sheet_name}!"
           notation << index_to_alpha(start_column_index)
           notation << (start_row_index+1).to_s
           notation << ":" if end_column_index || end_row_index

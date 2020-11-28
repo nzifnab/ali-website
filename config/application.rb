@@ -19,8 +19,13 @@ module AliWebsite
     config.active_record.schema_format = :sql
 
 
-    #config.google_client_id = ENV['GOOGLE_CLIENT_ID']
-    #config.google_client_secret = ENV['GOOGLE_CLIENT_SECRET']
+    # To allow the website to authenticate against the google API
+    # as a service account, make sure to set the following environment
+    # variables, which can be located from the credentials
+    # file downloaded from google's credentials index page:
+    # GOOGLE_ACCOUNT_TYPE='service_account'
+    # GOOGLE_CLIENT_EMAIL=''
+    # GOOGLE_PRIVATE_KEY=''
     config.google_api_key = ENV['GOOGLE_API_KEY']
   end
 end

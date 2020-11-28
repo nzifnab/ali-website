@@ -1,0 +1,22 @@
+.table-responsive
+  %table.table.table-striped.table-dark.table-hover.table-sm.js-sortable-table
+    %thead
+      %tr
+        %th Type
+        %th Item
+        %th.js-numeric-sort Price
+        %th.js-no-sort Quantity
+    %tbody
+      = form_for order do |f|
+        - f.fields_for :line_items do |li|
+          %tr
+            %td= li.object.corp_stock.item_type
+            %td= li.label :quantity, li.object.corp_stock.item
+            %td
+              = number_to_currency li.object.price, unit: "Ƶ"
+            %td
+              = li.hidden_field :price
+              = li.text_field :quantity
+        -# - @stock.each_with_index do |stock, index|
+        -#   = li.label "item[#{index}]", stock.item
+        -#   = li.input
