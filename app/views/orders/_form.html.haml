@@ -1,5 +1,16 @@
 .table-responsive
-  %table.table.table-striped.table-dark.table-hover.table-sm.js-sortable-table
+  .row.js-order-filter-buttons
+    .col
+      %input.btn.btn-secondaryk.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Ship"}, value: "Ships"} Ships
+    .col
+      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Mineral|Planetary"}} Minerals
+    .col
+      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Datacore"}} Datacores
+    .col
+      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Blueprint"}} Blueprints
+
+
+  %table.table.table-striped.table-dark.table-hover.table-sm.js-order-table
     %thead
       %tr
         %th Type
