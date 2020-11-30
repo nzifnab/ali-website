@@ -36,7 +36,7 @@ class OrdersController < ApplicationController
   def complete
     @order = Order.find(params[:id])
 
-    if @order.admin_token == params[:token] && params[:token].present?
+    if @order.admin_token == params[:token] && params[:token].present? && @order.pending?
       @order.complete!
       redirect_to order_path(@order.token)
     else
