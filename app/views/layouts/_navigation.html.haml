@@ -1,9 +1,11 @@
-%nav.navbar.navbar-dark.navbar-static-top.navbar-expand-md
+%nav.navbar.navbar-dark.navbar-static-top.navbar-expand-md.bg-dark
   .container
-    %button.navbar-toggler.collapsed{type: "button", data: {toggle: "collapse", target: ".js-navbar-collapse-1", aria_expanded: "false"}}
-      %span.sr-only Toggle %navigation
     = link_to root_path, class: "navbar-brand" do
       Ascended Lunar Isle
+
+    %button.navbar-toggler.collapsed{type: "button", data: {toggle: "collapse", target: ".js-navbar-collapse-1", aria_expanded: "false"}}
+      %span.navbar-toggler-icon
+
     .collapse.navbar-collapse.js-navbar-collapse-1
       %ul.nav.navbar-nav.mr-auto
         %li.nav-item= link_to "Home", root_path, class: "nav-link"
