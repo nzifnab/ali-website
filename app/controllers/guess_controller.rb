@@ -1,3 +1,4 @@
+# My nephew wanted me to make a number-guessing game so I shimmied it into a hidden url on the site. Sue me.
 class GuessController < ApplicationController
   def show
     @num = (rand*10+1).to_i
