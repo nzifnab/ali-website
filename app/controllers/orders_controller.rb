@@ -22,7 +22,15 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = Order.preload(:line_items).left_outer_joins(:stock_modifier_queue).where("stock_modifier_queues.executed_at IS NULL").order(id: :asc)
+    # Yes this query stuff should be in the model,
+    # sue me.
+    @orders = Order.preload(:line_items).left_outer_joins(:stock_modifier_queue).order(id: :asc)
+
+    if params[:completed]
+      @orders = @orders.where("stock_modifier_queues.executed_at IS NOT NULL")
+    else
+      @orders = @orders.where("stock_modifier_queues.executed_at IS NULL")
+    end
   end
 
   def complete
