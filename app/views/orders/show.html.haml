@@ -26,12 +26,6 @@
     For:
     = @order.player_name
 
-  - if @order.stock_modifier_queue&.complete?
-    %p
-      Stock Updated:
-      = time_ago_in_words(@order.stock_modifier_queue.executed_at)
-      ago
-
   .table-responsive
     %table.table.table-striped.table-dark.table-hover
       %thead

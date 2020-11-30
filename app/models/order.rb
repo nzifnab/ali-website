@@ -1,6 +1,5 @@
 class Order < ApplicationRecord
   has_many :line_items, dependent: :destroy
-  has_one :stock_modifier_queue
   has_secure_token
   has_secure_token :admin_token
 
@@ -23,32 +22,29 @@ class Order < ApplicationRecord
   end
 
   def complete!
-    create_stock_modifier_queue
+    line_items.each do |line_item|
+      stock = line_item.corp_stock
+      stock.update!(current_stock: stock.current_stock - line_item.quantity)
+    end
     update(status: "complete")
   end
 
   def pending?
-    status != "complete"
-  end
-
-  def pending_stock_update?
-    status == "complete" && !stock_modifier_queue.complete?
+    status == "pending"
   end
 
   def complete?
-    status == "complete" && stock_modifier_queue.complete?
+    status == "complete"
+  end
+
+  def cancelled?
+    status == "cancelled"
   end
 
   # Should be in a decorator but I'm too lazy to install draper and deal w/
   # decorator classes, so i'll do it here ;p
   def display_status
-    if pending?
-      status
-    elsif pending_stock_update?
-      "complete: stock update pending"
-    elsif complete?
-      "complete"
-    end
+    status
   end
 
   private

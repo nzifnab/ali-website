@@ -6,10 +6,10 @@ module OrdersHelper
   def order_status_badge_class(order)
     if order.pending?
       "badge-secondary"
-    elsif order.pending_stock_update?
-      "badge-info"
     elsif order.complete?
       "badge-success"
+    elsif order.cancelled?
+      "badge-danger"
     end
   end
 end
