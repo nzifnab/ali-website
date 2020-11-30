@@ -27,5 +27,6 @@ module AliWebsite
     # GOOGLE_CLIENT_EMAIL=''
     # GOOGLE_PRIVATE_KEY=''
     config.google_api_key = ENV['GOOGLE_API_KEY']
+    config.ali_market_sheet_id = ENV['MARKET_SHEET_ID']
   end
 end

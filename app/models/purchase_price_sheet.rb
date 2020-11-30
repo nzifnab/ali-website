@@ -1,6 +1,6 @@
 class PurchasePriceSheet < GoogleSheet
 
-  SHEET_ID = "1vsYPArvK-5Ah0mIVQIa9MnMk5EQFian6xrghUSEKF4s".freeze
+  SHEET_ID = Rails.application.config.ali_market_sheet_id.freeze
 
   def self.data
     new.data
@@ -19,7 +19,7 @@ class PurchasePriceSheet < GoogleSheet
     # end
     # result
     content = values_from_named_range("PurchaseWebsiteData")
-    names = values_from_named_range("ItemNames").flatten
+    names = values_from_named_range("ItemNamesPublic").flatten
     labels = content[0]
 
     result = {}
@@ -31,5 +31,21 @@ class PurchasePriceSheet < GoogleSheet
       end
     end
     result
+  end
+
+  def update_current_stock(update_list)
+    # This is done in the scheduler task that also collects the data
+    # initially... It would be a little more efficient to do this at the same
+    # time you're initially looping through the rows, but also more complex to
+    # write. I'm not worried about it. This'll only happen every 1-2 hours.
+    names = values_from_named_range("ItemNames").flatten
+    stock = values_from_named_range("ItemStock").flatten
+
+    values = []
+    names.each_with_index do |name, index|
+      values << (update_list[name] || stock[index])
+    end
+
+    write_values_to_named_range("ItemStock", [values])
   end
 end

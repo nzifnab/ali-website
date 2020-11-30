@@ -1,4 +1,9 @@
 %h1.text-center.display-3 Order Form
 
 .container
-  = render partial: 'orders/form', locals: {order: @order}
+  = form_for @order, html: {class: "js-order-form"} do |f|
+    = render partial: 'orders/form', locals: {f: f}
+
+    .fixed-actions
+      = f.submit "Submit", class: 'btn btn-success', "data-disable-with" => "Please Wait..."
+      %span.js-total-price

@@ -11,6 +11,8 @@ SET row_security = off;
 
 SET default_tablespace = '';
 
+SET default_table_access_method = heap;
+
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
@@ -103,7 +105,11 @@ CREATE TABLE public.orders (
     id bigint NOT NULL,
     total numeric(15,2),
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    player_name text,
+    token text,
+    status text DEFAULT 'pending'::text NOT NULL,
+    admin_token text
 );
 
 
@@ -136,6 +142,38 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: stock_modifier_queues; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stock_modifier_queues (
+    id bigint NOT NULL,
+    order_id bigint NOT NULL,
+    executed_at timestamp without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: stock_modifier_queues_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stock_modifier_queues_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stock_modifier_queues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stock_modifier_queues_id_seq OWNED BY public.stock_modifier_queues.id;
+
+
+--
 -- Name: corp_stocks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -154,6 +192,13 @@ ALTER TABLE ONLY public.line_items ALTER COLUMN id SET DEFAULT nextval('public.l
 --
 
 ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.orders_id_seq'::regclass);
+
+
+--
+-- Name: stock_modifier_queues id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stock_modifier_queues ALTER COLUMN id SET DEFAULT nextval('public.stock_modifier_queues_id_seq'::regclass);
 
 
 --
@@ -197,6 +242,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: stock_modifier_queues stock_modifier_queues_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stock_modifier_queues
+    ADD CONSTRAINT stock_modifier_queues_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_line_items_on_corp_stock_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -211,11 +264,26 @@ CREATE INDEX index_line_items_on_order_id ON public.line_items USING btree (orde
 
 
 --
+-- Name: index_stock_modifier_queues_on_order_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stock_modifier_queues_on_order_id ON public.stock_modifier_queues USING btree (order_id);
+
+
+--
 -- Name: line_items fk_rails_2dc2e5c22c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.line_items
     ADD CONSTRAINT fk_rails_2dc2e5c22c FOREIGN KEY (order_id) REFERENCES public.orders(id);
+
+
+--
+-- Name: stock_modifier_queues fk_rails_47bc943d74; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stock_modifier_queues
+    ADD CONSTRAINT fk_rails_47bc943d74 FOREIGN KEY (order_id) REFERENCES public.orders(id);
 
 
 --
@@ -235,6 +303,11 @@ SET search_path TO "$user", public;
 INSERT INTO "schema_migrations" (version) VALUES
 ('20201127213522'),
 ('20201127225418'),
-('20201127225754');
+('20201127225754'),
+('20201129165922'),
+('20201129181443'),
+('20201129222504'),
+('20201130031043'),
+('20201130040438');
 
 

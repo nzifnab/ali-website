@@ -1,33 +1,36 @@
+
+.form-group
+  = f.label :player_name, "In-Game Name (*)"
+  = f.text_field :player_name, class: "form-control", required: true
+.row.js-order-filter-buttons.mb-2
+  .col-sm
+    %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: ".js-column-type", filter_value: "Ship"}, value: "Ships"}
+  .col-sm
+    %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: ".js-column-type", filter_value: "Mineral|Planetary"}, value: "Minerals"}
+  .col-sm
+    %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: ".js-column-type", filter_value: "Datacore"}, value: "Datacores"}
+  .col-sm
+    %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: ".js-column-type", filter_value: "Blueprint"}, value: "Blueprints"}
+
 .table-responsive
-  .row.js-order-filter-buttons
-    .col
-      %input.btn.btn-secondaryk.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Ship"}, value: "Ships"} Ships
-    .col
-      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Mineral|Planetary"}} Minerals
-    .col
-      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Datacore"}} Datacores
-    .col
-      %input.btn.btn-secondary.btn-block{type: 'button', data: {filter_column: 0, filter_value: "Blueprint"}} Blueprints
-
-
   %table.table.table-striped.table-dark.table-hover.table-sm.js-order-table
     %thead
       %tr
-        %th Type
+        %th.js-column-type Type
         %th Item
         %th.js-numeric-sort Price
         %th.js-no-sort Quantity
     %tbody
-      = form_for order do |f|
-        - f.fields_for :line_items do |li|
-          %tr
-            %td= li.object.corp_stock.item_type
-            %td= li.label :quantity, li.object.corp_stock.item
-            %td
-              = number_to_currency li.object.price, unit: "Ƶ"
-            %td
-              = li.hidden_field :price
-              = li.text_field :quantity
-        -# - @stock.each_with_index do |stock, index|
-        -#   = li.label "item[#{index}]", stock.item
-        -#   = li.input
+      = f.fields_for :line_items do |li|
+        %tr
+          %td= li.object.corp_stock.item_type
+          %td= li.label :quantity, li.object.corp_stock.item
+          %td
+            = isk_currency li.object.price, true
+          %td
+            = li.hidden_field :corp_stock_id
+            = li.hidden_field :price
+            = li.text_field :quantity, class: "form-control", "data-price" => li.object.price, "data-item" => li.object.corp_stock.item, "data-stock" => li.object.corp_stock.current_stock
+      -# - @stock.each_with_index do |stock, index|
+      -#   = li.label "item[#{index}]", stock.item
+      -#   = li.input

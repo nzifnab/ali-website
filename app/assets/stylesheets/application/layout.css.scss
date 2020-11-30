@@ -28,12 +28,29 @@ $gray: #35373f;
 .navbar {
   font-size: 1.2rem;
 }
+.fixed-actions {
+  position: fixed;
+  z-index: 5;
+  right: 0rem;
+  bottom: 10%;
+  margin-top: 0;
+  box-sizing: border-box;
+  width: 28%;
+  padding: 1rem 3rem 1rem 1.75rem;
+  border: 1px solid #b2bac8;
+  border-right: none;
+  border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
+  background: #ebedf1;
+  box-shadow: 0 0.313rem 1.125rem rgba(0,0,0,0.18);
+  color: black;
+}
 
 
 body {
   background: $black;
   color: $white;
-  font-family: 'Merriweather', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
 }
 h1,
 h2 {
@@ -75,4 +92,24 @@ caption {
   float: left;
   clear: both;
 
+}
+
+
+.input-group-button {
+  width: 1%;
+  vertical-align: middle;
+  display: table-cell;
+
+  &:last-child .btn {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+.clippy {
+  margin-top: -3px;
+  position: relative;
+  top: 3px;
+
+  max-width: fit-content;
 }

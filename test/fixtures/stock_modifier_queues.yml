@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  order: one
+  executed_at: 2020-11-29 21:04:38
+
+two:
+  order: two
+  executed_at: 2020-11-29 21:04:38

@@ -1,2 +1,45 @@
-%h1 Orders#show
-%p Find me in app/views/orders/show.html.haml
+.container
+  - if flash[:notice].present?
+    .notice= flash[:notice]
+
+  .clearfix
+    %h1.float-left
+      Order #
+      = @order.id
+    %h4
+      .badge{class: order_status_badge_class(@order)}= @order.display_status
+
+  .mb-3
+    .row
+      .col-sm-8
+        .input-group.mb-3
+          = text_field_tag "order_path", order_url(@order.token), readonly: true, class: 'js-order-path'
+          .input-group-button
+            %button.btn.btn-secondary{type: 'button', data: {clipboard_target: ".js-order-path"}}
+              = image_tag("clippy.svg", width: "13", alt: "Copy to clipboard", class: "clippy")
+
+      .col-sm-4
+        - if @admin && @order.pending?
+          = link_to "Mark as Complete", complete_order_path(@order.id, token: params[:token]), class: "btn btn-success btn-block", method: :post, "data-toggle" => "tooltip", "data-disable-with" => "Please wait...", title: "This will update the stock in the market spreadsheet"
+
+  .table-responsive
+    %table.table.table-striped.table-dark.table-hover
+      %thead
+        %tr
+          %th Item
+          %th Price Per Unit
+          %th Quantity
+          %th Total
+          %th
+            %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
+      %tbody
+        = render @order.line_items
+
+        %tr
+          %td &nbsp;
+          %td &nbsp;
+          %td.text-right
+            %strong Total:
+          %td
+            %strong= isk_currency @order.total
+          %td &nbsp;

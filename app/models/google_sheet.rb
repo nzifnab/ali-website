@@ -32,6 +32,15 @@ class GoogleSheet
   def values_from_named_range(range_name)
     spreadsheet_service.get_spreadsheet_values(@sheet_id, named_range(range_name).to_a1_notation).values
   end
+
+  def write_values_to_named_range(range_name, values, dimension="COLUMNS")
+    rng = named_range(range_name).to_a1_notation
+    value_range_object = {
+      major_dimension:  dimension,
+      values: values
+    }
+    spreadsheet_service.update_spreadsheet_value(@sheet_id, rng, value_range_object, value_input_option: "USER_ENTERED")
+  end
 end
 
 module NamedRangeFix
