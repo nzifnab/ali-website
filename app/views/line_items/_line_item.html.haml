@@ -8,7 +8,7 @@
   %td
     = isk_currency line_item.total
   %td
-    - if !order.complete? && line_item.pending_stock?
+    - if !line_item.order.complete? && line_item.pending_stock?
       .badge.badge-danger{data: {toggle: "tooltip"}, title: "Corp will need to manufacture or source some or all of this item"}
         No
     - else
