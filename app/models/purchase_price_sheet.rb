@@ -34,6 +34,7 @@ class PurchasePriceSheet < GoogleSheet
   end
 
   def update_current_stock(update_list)
+    raise "Deprecated update_current_stock: This app no longer pushes updates to the stock spreadsheet"
     # This is done in the scheduler task that also collects the data
     # initially... It would be a little more efficient to do this at the same
     # time you're initially looping through the rows, but also more complex to

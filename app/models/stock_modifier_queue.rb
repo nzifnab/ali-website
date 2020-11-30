@@ -1,3 +1,5 @@
+# DEPRECATED: This app no longer pushes any data to
+# the stock spreadsheet.
 class StockModifierQueue < ApplicationRecord
   belongs_to :order
 

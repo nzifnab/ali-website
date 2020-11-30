@@ -15,7 +15,7 @@
 
 ## On the market sheet you need to set some named ranges. This is so that added/removed rows will not affect functionality of the website.:
 
-- "ItemNames": This should be the entire list of item names on the google sheet, EXCLUDING the header row. As of the time of writing this, it is "PurchasePrices!D2:D1000"
+- ~"ItemNames": This should be the entire list of item names on the google sheet, EXCLUDING the header row. As of the time of writing this, it is "PurchasePrices!D2:D1000"~ (no longer necessary as the app no longer tries to push updates to the non-public `PurchasePrices` sheet).
 - "ItemNamesPublic": This is the list of item names on the _public_ prices sheet, which is a filtered version of the other list. Do not include header row.
-- "ItemStock": This is the current stock value from the non-public sheet. This is the range that the website will UPDATE when orders are completed. Do not include header row.
+- ~"ItemStock": This is the current stock value from the non-public sheet. This is the range that the website will UPDATE when orders are completed. Do not include header row.~ No longer necessary, app no longer pushes updates to this sheet.
 - "PurchaseWebsiteData": This is basically the entire PurchasePricesPublic table, including the header rows ("PurchasePricesPublic!A1:I945")
