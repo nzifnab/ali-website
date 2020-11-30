@@ -22,6 +22,16 @@
         - if @admin && @order.pending?
           = link_to "Mark as Complete", complete_order_path(@order.id, token: params[:token]), class: "btn btn-success btn-block", method: :post, "data-toggle" => "tooltip", "data-disable-with" => "Please wait...", title: "This will update the stock in the market spreadsheet"
 
+  %p
+    For:
+    = @order.player_name
+
+  - if @order.stock_modifier_queue&.complete?
+    %p
+      Stock Updated:
+      = time_ago_in_words(@order.stock_modifier_queue.executed_at)
+      ago
+
   .table-responsive
     %table.table.table-striped.table-dark.table-hover
       %thead
