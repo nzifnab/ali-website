@@ -7,6 +7,6 @@ class LineItem < ApplicationRecord
   end
 
   def pending_stock?
-    quantity < corp_stock.current_stock
+    quantity > corp_stock.current_stock
   end
 end
