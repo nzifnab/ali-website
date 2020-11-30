@@ -12,6 +12,7 @@ class CorpStock < ApplicationRecord
   # update_prices:go rake task
   def self.update_from_spreadsheet!
     PurchasePriceSheet.data.each do |item_name, item_data|
+      Rails.logger.info("at=corp_stock type=info desc='Recording stock/price of #{item_name}'")
       stock = CorpStock.where(item: item_name.strip).first_or_initialize
       stock.assign_attributes(
         price_updated_at: item_data["PriceLastUpdated"],

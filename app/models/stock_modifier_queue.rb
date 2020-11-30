@@ -10,7 +10,7 @@ class StockModifierQueue < ApplicationRecord
         stock = line_item.corp_stock
         stock.update!(current_stock: stock.current_stock - line_item.quantity)
         updated_stock[stock.item] = stock.current_stock
-        puts "Updating #{stock.item} stock to #{stock.current_stock}"
+        Rails.logger.info "at=stock_modifier_queue type=info desc='Updating #{stock.item} stock to #{stock.current_stock}''"
       end
     end
 
