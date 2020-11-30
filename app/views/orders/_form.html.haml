@@ -26,7 +26,8 @@
           %td= li.object.corp_stock.item_type
           %td= li.label :quantity, li.object.corp_stock.item
           %td
-            = isk_currency li.object.price, true
+            %div{data: {toggle: "tooltip"}, title: "Data Updated: #{time_ago_in_words(li.object.corp_stock.price_updated_at)} ago"}
+              = isk_currency li.object.price, true
           %td
             = li.hidden_field :corp_stock_id
             = li.hidden_field :price
