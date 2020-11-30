@@ -1,0 +1,13 @@
+.container
+  %h1 Orders
+
+  .table-responsive
+    %table.table.table-striped.table-dark.table-hover.table-sm
+      %thead
+        %tr
+          %th Order ID
+          %th Player Name
+          %th Total
+          %th Status
+      %tbody
+        = render @orders

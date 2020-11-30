@@ -1,0 +1,9 @@
+%tr
+  %td{style: 'position: relative;'}
+    = link_to order.id, order_path(order.token), class: "text-light stretched-link"
+  %td{style: 'position: relative;'}
+    = link_to order.player_name, order_path(order.token), class: "text-light stretched-link"
+  %td{style: 'position: relative;'}
+    = link_to isk_currency(order.total), order_path(order.token), class: "text-light stretched-link"
+  %td{style: 'position: relative;'}
+    = link_to order.display_status, order_path(order.token),  class: "text-light stretched-link"

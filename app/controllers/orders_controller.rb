@@ -21,6 +21,10 @@ class OrdersController < ApplicationController
     redirect_to order_path(@order.token)
   end
 
+  def index
+    @orders = Order.preload(:line_items).left_outer_joins(:stock_modifier_queue).where("stock_modifier_queues.executed_at IS NULL").order(id: :asc)
+  end
+
   def complete
     @order = Order.find(params[:id])
 
