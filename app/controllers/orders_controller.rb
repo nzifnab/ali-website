@@ -22,8 +22,6 @@ class OrdersController < ApplicationController
   end
 
   def index
-    # Yes this query stuff should be in the model,
-    # sue me.
     @orders = Order.preload(:line_items).order(id: :asc)
 
     if params[:completed]

@@ -46,6 +46,15 @@ $gray: #35373f;
   color: black;
 }
 
+html {
+  font-size: 12px;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 16px;
+  }
+}
 
 body {
   background: $black;

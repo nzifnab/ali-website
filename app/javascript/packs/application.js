@@ -24,6 +24,5 @@ require('datatables.net-bs4/css/dataTables.bootstrap4.css')
 // const imagePath = (name) => images(name, true)
 
 import "bootstrap"
-import "../stylesheets/application"
 
 require("ali_website");
