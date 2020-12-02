@@ -28,5 +28,6 @@ module AliWebsite
     # GOOGLE_PRIVATE_KEY=''
     config.google_api_key = ENV['GOOGLE_API_KEY']
     config.ali_market_sheet_id = ENV['MARKET_SHEET_ID']
+    config.discord_invite_link = ENV['DISCORD_LINK']
   end
 end
