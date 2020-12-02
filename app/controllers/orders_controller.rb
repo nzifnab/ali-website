@@ -24,10 +24,28 @@ class OrdersController < ApplicationController
   def index
     @orders = Order.preload(:line_items).order(id: :asc)
 
-    if params[:completed]
+    @status = params[:status]
+    @status ||= "pending"
+
+    # Don't want to just insert @status straight into the query
+    # because a user could submit whatever and maybe we dont' want that.
+    if @status == "complete"
       @orders = @orders.where(status: "complete")
+    elsif @status == "cancelled"
+      @orders = @orders.where(status: "cancelled")
     else
-      @orders = @orders.where.not(status: "complete")
+      @orders = @orders.where(status: "pending")
+    end
+  end
+
+  def destroy
+    @order = Order.find(params[:id])
+
+    if @order.admin_token == params[:token] && params[:token].present? && @order.pending?
+      @order.cancel!
+      redirect_to order_path(@order.token, token: @order.admin_token)
+    else
+      render action: 'show', notice: "Not authorized"
     end
   end
 
@@ -36,7 +54,7 @@ class OrdersController < ApplicationController
 
     if @order.admin_token == params[:token] && params[:token].present? && @order.pending?
       @order.complete!
-      redirect_to order_path(@order.token)
+      redirect_to order_path(@order.token, token: @order.admin_token)
     else
       render action: 'show', notice: "Not authorized"
     end

@@ -29,6 +29,10 @@ class Order < ApplicationRecord
     update(status: "complete")
   end
 
+  def cancel!
+    update(status: "cancelled")
+  end
+
   def pending?
     status == "pending"
   end
