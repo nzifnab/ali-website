@@ -11,16 +11,19 @@
 
   .mb-3
     .row
-      .col-sm-8
+      .col-md-4
         .input-group.mb-3
           = text_field_tag "order_path", order_url(@order.token), readonly: true, class: 'js-order-path'
           .input-group-button
             %button.btn.btn-secondary{type: 'button', data: {clipboard_target: ".js-order-path"}}
               = image_tag("clippy.svg", width: "13", alt: "Copy to clipboard", class: "clippy")
 
-      .col-sm-4
+      .col-md-4
+        = link_to_tracker_spreadsheet
+
+      .col-md-4
         - if @admin && @order.pending?
-          = link_to "Mark as Complete", complete_order_path(@order.id, token: params[:token]), class: "btn btn-success btn-block", method: :post, "data-toggle" => "tooltip", "data-disable-with" => "Please wait...", title: "This will update the stock in the market spreadsheet"
+          = link_to "Mark as Complete", complete_order_path(@order.id, token: params[:token]), class: "btn btn-success btn-block", method: :post, "data-toggle" => "tooltip", "data-disable-with" => "Please wait...", title: "This will temporarily update the stock cached in the database."
 
   %p
     For:

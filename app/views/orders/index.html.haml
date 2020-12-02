@@ -6,10 +6,14 @@
       Incomplete
     Orders
 
-  - if params[:completed]
-    = link_to "View Incomplete Orders", orders_path, class: "btn btn-secondary mb-3"
-  - else
-    = link_to "View Completed Orders", orders_path(completed: true), class: "btn btn-secondary mb-3"
+  .row
+    .col-md-6
+      - if params[:completed]
+        = link_to "View Incomplete Orders", orders_path, class: "btn btn-secondary mb-3"
+      - else
+        = link_to "View Completed Orders", orders_path(completed: true), class: "btn btn-secondary mb-3"
+    .col-md-6
+      = link_to_tracker_spreadsheet
 
   .table-responsive
     %table.table.table-striped.table-dark.table-hover.table-sm

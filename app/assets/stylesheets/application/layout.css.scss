@@ -102,6 +102,13 @@ caption {
   clear: both;
 
 }
+a {
+  color: $gray-300;
+
+  &:hover {
+    color: $gray-500;
+  }
+}
 
 
 .input-group-button {

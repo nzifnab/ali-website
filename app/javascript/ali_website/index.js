@@ -62,7 +62,7 @@
     });
 
     $(".js-order-form").on("submit", function(e){
-      table.search("").columns().search("").draw();
+      resetTableSearch(table);
     });
 
     $("[data-toggle]").tooltip();
@@ -82,7 +82,8 @@
 
 
     $(".js-review-order").on("show.bs.modal", function(e){
-      table.search("").columns().search("").draw();
+      resetTableSearch(table);
+
       $(".js-review-order-body").html("");
       $(".js-modal-stock-warning").hide();
       total = 0;
@@ -153,3 +154,12 @@ function formatMoney(amount, decimalCount = 2, unit = "Ƶ", decimal = ".", thous
     console.log(e)
   }
 };
+
+function resetTableSearch(table) {
+  table.search("").columns().search("").draw();
+
+  $(".js-order-filter-buttons input[type=button]").
+    addClass("btn-secondary").
+    removeClass("btn-primary").
+    data("active", false);
+}
