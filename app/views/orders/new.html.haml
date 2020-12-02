@@ -5,5 +5,50 @@
     = render partial: 'orders/form', locals: {f: f}
 
     .fixed-actions
-      = f.submit "Submit", class: 'btn btn-success', "data-disable-with" => "Please Wait..."
+      -# = f.submit "Submit", class: 'btn btn-success', "data-disable-with" => "Please Wait..."
+      -# %span.js-total-price
+      %button{type: 'button', class: 'btn btn-success', data: {toggle: "modal", target: ".js-review-order"}}
+        Review Order
       %span.js-total-price
+
+    .js-review-order.modal.fade{tabindex: -1, role: "dialog", "aria-hidden" => "true"}
+      .modal-dialog.modal-lg{role: "document"}
+        .modal-content
+          .modal-header
+            %h5.modal-title
+              Review Order
+            %span{"aria-hidden" => "true"} &times;
+
+          .modal-body
+            .form-group
+              = f.label :player_name, "In-Game Name (*)"
+              = f.text_field :player_name, class: "form-control js-player-name", required: true
+
+
+            .table-responsive
+              %table.table.table-striped.table-dark.table-hover
+                %thead
+                  %tr
+                    %th Item
+                    %th Price Per Unit
+                    %th Quantity
+                    %th Total
+                    %th
+                      %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."}
+                        In stock?
+                %tbody.js-review-order-body
+                %tfoot
+                  %tr
+                    %th Grand Total
+                    %th &nbsp;
+                    %th &nbsp;
+                    %th.js-modal-total &nbsp;
+
+            .alert.alert-danger.js-modal-stock-warning{role: "alert"}
+              Some selected items do not have sufficient stock
+              to fulfill your order (see above). These items may
+              require additional time for manufacturing or collection.
+
+          .modal-footer
+            %button{type: "button", class: "btn btn-secondary", data: {dismiss: "modal"}} Edit Order
+            = f.submit "Submit Order", class: "btn btn-primary"

@@ -57,6 +57,10 @@
     });
     calculateTotal();
 
+    $(".js-order-form").on("keydown", function(e){
+      return e.key != "Enter";
+    });
+
     $(".js-order-form").on("submit", function(e){
       table.search("").columns().search("").draw();
     });
@@ -74,6 +78,52 @@
         $(e.trigger).tooltip("disable");
       }, 1000);
     });
+
+
+
+    $(".js-review-order").on("show.bs.modal", function(e){
+      table.search("").columns().search("").draw();
+      $(".js-review-order-body").html("");
+      $(".js-modal-stock-warning").hide();
+      total = 0;
+      stockMissing = false;
+
+      $(".js-item-quantity").each(function(){
+        $quantityField = $(this)
+        quantity = Number($quantityField.val());
+        if(!quantity || quantity <= 0){
+          return true;
+        }
+
+        item = $quantityField.data("item")
+        price = $quantityField.data("price")
+        stock = $quantityField.data("stock")
+        subtotal = quantity * price;
+
+        inStock = (stock >= quantity);
+        console.log("stockMissing: " + stockMissing + ", inStock: " + inStock);
+        stockMissing ||= !inStock;
+
+        $htmlLine = $(`
+          <tr>
+            <td>${item}</td>
+            <td>${formatMoney(price)}</td>
+            <td>${formatMoney(quantity, 0, "")}</td>
+            <td>${formatMoney(subtotal, 0)}</td>
+            <td>${inStock ? 'Yes' : 'NO'}</td>
+          </tr>
+        `);
+
+        $(".js-review-order-body").append($htmlLine);
+
+        total += subtotal;
+      });
+
+      $(".js-modal-total").html(formatMoney(total, 0));
+      if(stockMissing){
+        $(".js-modal-stock-warning").show();
+      }
+    });
   });
 })(jQuery);
 
@@ -85,10 +135,10 @@ function calculateTotal() {
     total += price;
   })
 
-  $(".js-total-price").text("Ƶ" + formatMoney(total, 0));
+  $(".js-total-price").text(formatMoney(total, 0));
 }
 
-function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+function formatMoney(amount, decimalCount = 2, unit = "Ƶ", decimal = ".", thousands = ",") {
   try {
     decimalCount = Math.abs(decimalCount);
     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
@@ -98,7 +148,7 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
     let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
     let j = (i.length > 3) ? i.length % 3 : 0;
 
-    return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+    return negativeSign + unit + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
   } catch (e) {
     console.log(e)
   }
