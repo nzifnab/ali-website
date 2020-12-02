@@ -8,4 +8,5 @@ environment.plugins.append("Provide", new webpack.ProvidePlugin({
   ClipboardJS: "clipboard"
 }))
 
+
 module.exports = environment
