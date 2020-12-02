@@ -4,7 +4,7 @@ class CorpStock < ApplicationRecord
     # In case we later decide
     # not everything here should be listed
     # on the form.
-    all
+    where("price_updated_at >= ? OR current_stock > ?", 8.days.ago, 0)
   end
 
   # Performed every couple hours via

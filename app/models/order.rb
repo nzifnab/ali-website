@@ -21,6 +21,14 @@ class Order < ApplicationRecord
     Order.preload(line_items: :corp_stock).find_by_token(token)
   end
 
+  def self.filter(state)
+    if !["complete", "cancelled", "pending"].include?(state)
+      state = "pending"
+    end
+
+    where(status: state)
+  end
+
   def complete!
     line_items.each do |line_item|
       stock = line_item.corp_stock

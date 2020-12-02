@@ -22,20 +22,10 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = Order.preload(:line_items).order(id: :asc)
-
     @status = params[:status]
     @status ||= "pending"
 
-    # Don't want to just insert @status straight into the query
-    # because a user could submit whatever and maybe we dont' want that.
-    if @status == "complete"
-      @orders = @orders.where(status: "complete")
-    elsif @status == "cancelled"
-      @orders = @orders.where(status: "cancelled")
-    else
-      @orders = @orders.where(status: "pending")
-    end
+    @orders = Order.filter(@status).preload(:line_items).order(id: :asc)
   end
 
   def destroy
