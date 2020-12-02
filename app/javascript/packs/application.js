@@ -13,7 +13,7 @@ window.$ = jQuery;
 require('datatables.net')
 // Datatables Bootstrap 4
 require('datatables.net-bs4/js/dataTables.bootstrap4.js')
-require('datatables.net-bs4/css/dataTables.bootstrap4.css')
+// require('datatables.net-bs4/css/dataTables.bootstrap4.css')
 
 
 // Uncomment to copy all static images under ../images to the output folder and reference
