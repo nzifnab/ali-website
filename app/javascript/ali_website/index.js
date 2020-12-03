@@ -56,13 +56,13 @@
     )
 
     $(".js-item-quantity").on("focus", function(e) {
-      quantity = Number($(this).val());
+      var quantity = Number($(this).val());
       quantity ||= 0;
       stockWarning($(this), quantity, Number($(this).data("stock")));
     });
 
     $(".js-item-quantity").on("keyup", function(e) {
-      quantity = Number($(this).val());
+      var quantity = Number($(this).val());
       quantity ||= 0;
       stockWarning($(this), quantity, Number($(this).data("stock")));
 
@@ -85,7 +85,7 @@
 
     $("[data-toggle]").tooltip();
 
-    clipboard = new ClipboardJS("[data-clipboard-target]");
+    var clipboard = new ClipboardJS("[data-clipboard-target]");
     clipboard.on("success", function(e) {
       $(e.trigger).tooltip({title: "Copied!"});
       $(e.trigger).tooltip("enable");
@@ -104,22 +104,22 @@
 
       $(".js-review-order-body").html("");
       $(".js-modal-stock-warning").hide();
-      total = 0;
-      stockMissing = false;
+      var total = 0;
+      var stockMissing = false;
 
       $(".js-item-quantity").each(function(){
-        $quantityField = $(this)
-        quantity = Number($quantityField.val());
+        var $quantityField = $(this)
+        var quantity = Number($quantityField.val());
         if(!quantity || quantity <= 0){
           return true;
         }
 
-        item = $quantityField.data("item")
-        price = $quantityField.data("price")
-        stock = $quantityField.data("stock")
-        subtotal = quantity * price;
+        var item = $quantityField.data("item")
+        var price = $quantityField.data("price")
+        var stock = $quantityField.data("stock")
+        var subtotal = quantity * price;
 
-        inStock = (stock >= quantity);
+        var inStock = (stock >= quantity);
         console.log("stockMissing: " + stockMissing + ", inStock: " + inStock);
         stockMissing ||= !inStock;
 
@@ -148,7 +148,7 @@
 
 var prices = {};
 function calculateTotal() {
-  total = 0;
+  var total = 0;
   Object.entries(prices).forEach(pricing => {
     const [item, price] = pricing;
     total += price;
@@ -159,12 +159,17 @@ function calculateTotal() {
 
 function formatMoney(amount, decimalCount = 2, unit = "Ƶ", decimal = ".", thousands = ",") {
   try {
-    decimalCount = Math.abs(decimalCount);
+    var decimalCount = Math.abs(decimalCount);
     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    if (Number(Math.abs(Number(amount) || 0).toFixed(decimalCount)) == Number(Math.abs(Number(amount) || 0).toFixed(0))) {
+      decimalCount = 0;
+    }
 
     const negativeSign = amount < 0 ? "-" : "";
 
     let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+    // let i = parseInt(amount = Math.abs(Number(amount) || 0)).toString();
     let j = (i.length > 3) ? i.length % 3 : 0;
 
     return negativeSign + unit + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
