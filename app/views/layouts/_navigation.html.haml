@@ -2,17 +2,20 @@
   .container
     = link_to root_path, class: "navbar-brand" do
       Ascended Lunar Isle
-
+    - if corp_member?
+      .badge.badge-primary.d-md-none
+        ALI
+    %button.navbar-toggler.collapsed{type: "button", data: {toggle: "collapse", target: ".js-navbar-collapse-1", aria_expanded: "false"}}
+      %span.navbar-toggler-icon
     .collapse.navbar-collapse.js-navbar-collapse-1
       %ul.nav.navbar-nav.mr-auto
         %li.nav-item= link_to "Buy From ALI", new_order_path, class: "nav-link"
         %li.nav-item= link_to "Orders", orders_path, class: "nav-link"
         %li.nav-item= link_to "Contact Us", Rails.application.config.discord_invite_link, class: "nav-link", target: "_blank"
 
+
+
     - if corp_member?
-      .badge.badge-primary
+      .badge.badge-primary.d-none.d-md-block
         ALI
         %span.d-none.d-lg-inline Member
-
-    %button.navbar-toggler.collapsed{type: "button", data: {toggle: "collapse", target: ".js-navbar-collapse-1", aria_expanded: "false"}}
-      %span.navbar-toggler-icon
