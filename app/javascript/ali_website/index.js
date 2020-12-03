@@ -48,14 +48,32 @@
       }
     });
 
-    $("input[data-price]").on("change", function(e) {
+    $(".js-item-quantity").popover(
+      {
+        trigger: "manual",
+        placement: "left"
+      }
+    )
+
+    $(".js-item-quantity").on("focus", function(e) {
       quantity = Number($(this).val());
       quantity ||= 0;
+      stockWarning($(this), quantity, Number($(this).data("stock")));
+    });
+
+    $(".js-item-quantity").on("keyup", function(e) {
+      quantity = Number($(this).val());
+      quantity ||= 0;
+      stockWarning($(this), quantity, Number($(this).data("stock")));
 
       prices[$(this).data("item")] = Number($(this).data("price")) * quantity;
       calculateTotal();
     });
     calculateTotal();
+
+    $(".js-item-quantity").on("blur", function(e) {
+      $(this).popover("hide");
+    })
 
     $(".js-order-form").on("keydown", function(e){
       return e.key != "Enter";
@@ -162,4 +180,14 @@ function resetTableSearch(table) {
     addClass("btn-secondary").
     removeClass("btn-primary").
     data("active", false);
+}
+
+function stockWarning($input, quantity, stock) {
+  if (quantity > stock || stock <= 0) {
+    $input.addClass("border-warning").addClass("border-thick");
+    $input.popover("show");
+  } else {
+    $input.removeClass("border-warning").removeClass("border-thick");
+    $input.popover("hide");
+  }
 }

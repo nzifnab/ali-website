@@ -109,6 +109,16 @@ a {
     color: $gray-500;
   }
 }
+.alert a {
+  color: $gray-600;
+  &:hover {
+    color: $gray-700;
+  }
+}
+
+.border-thick {
+  border-width: 3px;
+}
 
 
 .input-group-button {
@@ -131,5 +141,9 @@ a {
 }
 
 .modal {
+  color: #212529;
+}
+
+.popover {
   color: #212529;
 }

@@ -28,7 +28,4 @@
           %td
             = li.hidden_field :corp_stock_id
             = li.hidden_field :price
-            = li.text_field :quantity, class: "form-control js-item-quantity", "data-price" => li.object.price, "data-item" => li.object.corp_stock.item, "data-stock" => li.object.corp_stock.current_stock
-      -# - @stock.each_with_index do |stock, index|
-      -#   = li.label "item[#{index}]", stock.item
-      -#   = li.input
+            = li.text_field :quantity, class: "form-control js-item-quantity #{li.object.corp_stock.current_stock <= 0 ? "border-warning border-thick" : ""}", autocomplete: "off", "data-price" => li.object.price, "data-item" => li.object.corp_stock.item, "data-stock" => li.object.corp_stock.current_stock, "data-title" => "Not Enough Stock", "data-html" => true, "data-content" => "Not enough stock to fulfill this quantity.<br>[ALI] will need time to manufacture<br>or gather these items."

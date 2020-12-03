@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   def new
-    @order = Order.order_for_form
+    @order = Order.order_for_form(corp_member?)
   end
 
   def show
