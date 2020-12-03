@@ -16,6 +16,7 @@ class OrdersController < ApplicationController
 
   def create
     @order = Order.new(order_params)
+    @order.corp_member = corp_member?
 
     @order.save!
     redirect_to order_path(@order.token)

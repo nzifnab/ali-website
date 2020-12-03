@@ -40,7 +40,8 @@ CREATE TABLE public.corp_stocks (
     corp_member_sale_price numeric(15,2),
     buy_price numeric(15,2),
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    sale_valid boolean DEFAULT false NOT NULL
 );
 
 
@@ -109,7 +110,8 @@ CREATE TABLE public.orders (
     player_name text,
     token text,
     status text DEFAULT 'pending'::text NOT NULL,
-    admin_token text
+    admin_token text,
+    corp_member boolean DEFAULT true NOT NULL
 );
 
 
@@ -308,6 +310,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201129181443'),
 ('20201129222504'),
 ('20201130031043'),
-('20201130040438');
+('20201130040438'),
+('20201203093636'),
+('20201203093754');
 
 

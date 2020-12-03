@@ -32,6 +32,8 @@
           = link_to "Cancel Order", order_path(@order.id, token: params[:token]), class: "btn btn-danger btn-block", method: :delete, "data-toggle" => "tooltip", "data-disable-with" => "Please Wait...", title: "This will cancel the order, this action is irreversible.", "data-confirm" => "Are you sure you want to cancel this order?"
   %p
     For:
+    - if @order.corp_member?
+      %span.badge.badge-primary ALI
     = @order.player_name
 
   .table-responsive

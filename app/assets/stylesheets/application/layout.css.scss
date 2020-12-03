@@ -47,12 +47,18 @@ $gray: #35373f;
 }
 
 html {
-  font-size: 12px;
+  font-size: 11px;
+}
+
+.alert-sm {
+  margin-bottom: 0;
+  padding: 0.3rem 0.8rem;
 }
 
 @include media-breakpoint-up(sm) {
   html {
     font-size: 16px;
+    line-height: 1.5;
   }
 }
 
@@ -60,6 +66,7 @@ body {
   background: $black;
   color: $white;
   font-family: 'Noto Sans', sans-serif;
+  line-height: 1.2;
 }
 h1,
 h2 {
@@ -109,12 +116,7 @@ a {
     color: $gray-500;
   }
 }
-.alert a {
-  color: $gray-600;
-  &:hover {
-    color: $gray-700;
-  }
-}
+
 
 .border-thick {
   border-width: 3px;
@@ -138,6 +140,10 @@ a {
   top: 3px;
 
   max-width: fit-content;
+}
+
+.table-responsive {
+  overflow-x: initial;
 }
 
 .modal {
