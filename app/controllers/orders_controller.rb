@@ -18,8 +18,12 @@ class OrdersController < ApplicationController
     @order = Order.new(order_params)
     @order.corp_member = corp_member?
 
-    @order.save!
-    redirect_to order_path(@order.token)
+    if @order.save
+      redirect_to order_path(@order.token)
+    else
+      @order.rebuild_for_form(corp_member?)
+      render action: :new
+    end
   end
 
   def index

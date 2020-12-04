@@ -2,6 +2,12 @@
 
 .container
   = form_for @order, html: {class: "js-order-form"} do |f|
+    - if @order.errors.any?
+      .alert.alert-warning
+        %h4.alert-heading There were errors in your order
+        %ul
+          - @order.errors.full_messages.each do |error|
+            %li= error
     = render partial: 'orders/form', locals: {f: f}
 
     .fixed-actions

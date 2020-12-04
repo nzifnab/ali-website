@@ -151,7 +151,9 @@ function calculateTotal() {
   var total = 0;
   Object.entries(prices).forEach(pricing => {
     const [item, price] = pricing;
-    total += price;
+    if(price > 0) {
+      total += price;
+    }
   })
 
   $(".js-total-price").text(formatMoney(total, 0));
