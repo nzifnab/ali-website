@@ -69,7 +69,7 @@
       prices[$(this).data("item")] = Number($(this).data("price")) * quantity;
       calculateTotal();
     });
-    calculateTotal();
+    calculateTotal(true);
 
     $(".js-item-quantity").on("blur", function(e) {
       $(this).popover("hide");
@@ -147,7 +147,17 @@
 })(jQuery);
 
 var prices = {};
-function calculateTotal() {
+function calculateTotal(initiateFields = false) {
+  if(initiateFields){
+    $(".js-item-quantity").each(function(){
+      var quantity = Number($(this).val());
+      if (!quantity || quantity <= 0) {
+        return true;
+      }
+      prices[$(this).data("item")] = Number($(this).data("price")) * quantity;
+    });
+  }
+
   var total = 0;
   Object.entries(prices).forEach(pricing => {
     const [item, price] = pricing;
@@ -158,6 +168,7 @@ function calculateTotal() {
 
   $(".js-total-price").text(formatMoney(total, 0));
 }
+window.calculateTotal = calculateTotal;
 
 function formatMoney(amount, decimalCount = 2, unit = "Ƶ", decimal = ".", thousands = ",") {
   try {

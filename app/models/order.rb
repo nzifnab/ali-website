@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  has_many :line_items, dependent: :destroy
+  has_many :line_items, dependent: :destroy, inverse_of: :order
   has_secure_token
   has_secure_token :admin_token
 
@@ -8,7 +8,7 @@ class Order < ApplicationRecord
   before_create :set_prices_from_stock
   before_create :cache_total_price
 
-  validates :player_name, presence: true
+  validates :player_name, presence: {message: "Player Name is required"}
   validate :validate_not_empty
 
   def self.order_for_form(external=true)
@@ -22,7 +22,7 @@ class Order < ApplicationRecord
   end
 
   def rebuild_for_form(external)
-    CorpStock.purchaseable.where.not(id: line_items.pluck(:corp_stock_id)).each do |stock|
+    CorpStock.purchaseable.where.not(id: line_items.map(&:corp_stock_id)).each do |stock|
       price = external ? stock.external_sale_price : stock.corp_member_sale_price
       line_items.build(corp_stock: stock, price: price)
     end
@@ -46,11 +46,11 @@ class Order < ApplicationRecord
       stock = line_item.corp_stock
       stock.update!(current_stock: stock.current_stock - line_item.quantity)
     end
-    update(status: "complete")
+    update_column(:status, "complete")
   end
 
   def cancel!
-    update(status: "cancelled")
+    update_column(:status, "cancelled")
   end
 
   def pending?
