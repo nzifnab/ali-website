@@ -22,7 +22,8 @@ class CorpStock < ApplicationRecord
         corp_member_sale_price: num_from_string(item_data["CorpMemberSalePrice"]),
         buy_price: num_from_string(item_data["CurrentBuyPrice"]),
         item_type: item_data["Type"],
-        sale_valid: item_data["SaleValid"]
+        sale_valid: item_data["SaleValid"],
+        purchase_price_metadata: item_data[:metadata]
       )
       stock.save!
     end

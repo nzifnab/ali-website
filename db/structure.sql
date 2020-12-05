@@ -41,7 +41,8 @@ CREATE TABLE public.corp_stocks (
     buy_price numeric(15,2),
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    sale_valid boolean DEFAULT false NOT NULL
+    sale_valid boolean DEFAULT false NOT NULL,
+    purchase_price_metadata jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -75,7 +76,8 @@ CREATE TABLE public.line_items (
     quantity bigint,
     price numeric(15,2),
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    purchase_price_metadata jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -312,6 +314,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201130031043'),
 ('20201130040438'),
 ('20201203093636'),
-('20201203093754');
+('20201203093754'),
+('20201205111951');
 
 

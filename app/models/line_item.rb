@@ -7,6 +7,8 @@ class LineItem < ApplicationRecord
   validates :quantity, numericality: {greater_than: 0, message: ->(object, data){ "'Quantity' for #{object.corp_stock.item} must be greater than 0." }}
   validate :external_order_above_fulfillment_quantity
 
+  before_create :store_metadata_snapshot
+
   def total
     price * quantity
   end
@@ -44,5 +46,12 @@ class LineItem < ApplicationRecord
       errors.add(:quantity, "You cannot order more than #{number_with_delimiter(buyable_amount)} #{corp_stock.item} due to our current levels of stock. The quantity has been adjusted automatically to this maximum amount, you may submit again if acceptable.")
       self.quantity = buyable_amount
     end
+  end
+
+  # before_create
+  # Captures the purchase price metadata at the point that this entry was created, so that later
+  # changes won't affect what's displayed.
+  def store_metadata_snapshot
+    self.purchase_price_metadata = corp_stock.purchase_price_metadata
   end
 end

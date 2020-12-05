@@ -30,7 +30,7 @@ class GoogleSheet
   end
 
   def values_from_named_range(range_name)
-    spreadsheet_service.get_spreadsheet_values(@sheet_id, named_range(range_name).to_a1_notation).values
+    spreadsheet_service.get_spreadsheet_values(@sheet_id, named_range(range_name).to_a1_notation, date_time_render_option: :formatted_string, value_render_option: :unformatted_value).values
   end
 
   def write_values_to_named_range(range_name, values, dimension="COLUMNS")

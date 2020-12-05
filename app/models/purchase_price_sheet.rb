@@ -20,7 +20,15 @@ class PurchasePriceSheet < GoogleSheet
     # result
     content = values_from_named_range("PurchaseWebsiteData")
     names = values_from_named_range("ItemNamesPublic").flatten
+    metadata = spreadsheet_service.get_spreadsheet_values(
+      @sheet_id,
+      "PurchasePrices!A1:AM",
+      date_time_render_option: :serial_number,
+      value_render_option: :unformatted_value
+    ).values
+
     labels = content[0]
+    metadata_labels = metadata[0]
 
     result = {}
     names.each_with_index do |name, index|
@@ -28,6 +36,11 @@ class PurchasePriceSheet < GoogleSheet
 
       labels.each_with_index do |label, label_index|
         result[name][label] = content[index+1][label_index]
+      end
+
+      result[name][:metadata] = {}
+      metadata_labels.each_with_index do |metalabel, label_index|
+        result[name][:metadata][metalabel] = metadata[index+1][label_index]
       end
     end
     result
