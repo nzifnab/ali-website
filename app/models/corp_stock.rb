@@ -37,6 +37,10 @@ class CorpStock < ApplicationRecord
     item_type =~ /^Ship\-/
   end
 
+  def blueprint?
+    item_type == "Blueprint"
+  end
+
   def purchaseable?(corp_member_flag)
     # Always buyable if 'sale valid' flag is true
     return true if sale_valid?

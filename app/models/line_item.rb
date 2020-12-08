@@ -35,7 +35,13 @@ class LineItem < ApplicationRecord
       where(corp_stock_id: corp_stock_id).
       sum(:quantity)
 
-    buyable_amount = [0, (corp_stock.current_stock - outstanding_quantities) - corp_stock.desired_stock].max.to_i
+    buyable_amount = if corp_stock.blueprint?
+      # Blueprints can be sold all the way down to 0
+      [0, corp_stock.current_stock - outstanding_quantities].max.to_i
+    else
+      # Anything else can only be sold down to `DesiredStock`
+      [0, (corp_stock.current_stock - outstanding_quantities) - corp_stock.desired_stock].max.to_i
+    end
 
     # Do not allow the purchase of resources that would bring it's quantity (when added
     # to other outstanding orders) to fall below our fulfillment % (desired_stock)
