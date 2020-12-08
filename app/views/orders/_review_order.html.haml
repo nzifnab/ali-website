@@ -26,7 +26,7 @@
             %tbody.js-review-order-body
             %tfoot
               %tr
-                %th Grand Total
+                %th Total
                 %th &nbsp;
                 %th &nbsp;
                 %th.js-modal-total &nbsp;
@@ -38,6 +38,26 @@
           If this is urgent
           = link_to "contact us on discord", Rails.application.config.discord_invite_link, target: "_blank", class: "alert-link"
           for an ETA or to discuss your needs.
+
+        - if corp_member?
+          .form-group.alert.alert-warning
+            .form-check
+              = f.radio_button :corp_member_type, "contract", required: true, class: "form-check-input js-option-contract-fee"
+              = f.label :corp_member_type, "I am a member of Ascended Legends or would prefer to <strong>contract</strong> the isk to reduce audit timers.".html_safe, value: "contract"
+            .form-check
+              = f.radio_button :corp_member_type, "donation", required: true, class: "form-check-input js-option-no-contract-fee"
+              = f.label :corp_member_type, "I am a member of Ascended Lunar Isle, and can <strong>donate</strong> isk to corp wallet, but may incur audit timers.".html_safe, value: "donation"
+
+        .js-contract-fee-table{class: (f.object.corp_member_type == "contract" ? "" : "d-none")}
+          .table-responsive
+            %table.table.table-hover
+              %tbody
+                %tr
+                  %td.text-right Contract Fee:
+                  %td.js-contract-fee-value
+                %tr
+                  %td.text-right Grand Total:
+                  %td.js-contract-fee-final
 
       .modal-footer
         %button{type: "button", class: "btn btn-secondary", data: {dismiss: "modal"}} Edit Order

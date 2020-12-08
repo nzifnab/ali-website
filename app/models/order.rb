@@ -6,7 +6,6 @@ class Order < ApplicationRecord
   accepts_nested_attributes_for :line_items, reject_if: -> (attrs){attrs['quantity'].blank?}
 
   before_create :set_prices_from_stock
-  before_create :cache_total_price
 
   validates :player_name, presence: {message: "Player Name is required"}
   validate :validate_not_empty
@@ -71,20 +70,36 @@ class Order < ApplicationRecord
     status
   end
 
+  def total
+    subtotal + contract_fee
+  end
+
+  def corp_member?
+    corp_member_type != "external"
+  end
+
+  def contract?
+    # For AL Members
+    corp_member_type == "contract"
+  end
+
   private
 
   # before_create
   def set_prices_from_stock
     # Makes sure to set each line item's price directly from the corp price and
     # not trust the value from the form
+    tot = 0
     line_items.each do |li|
       li.price = (corp_member? ? li.corp_stock.corp_member_sale_price : li.corp_stock.external_sale_price)
+      tot += (li.price * li.quantity)
     end
-  end
+    self.subtotal = tot
 
-  # before_create
-  def cache_total_price
-    self.total = line_items.sum{|li| li.price * li.quantity}
+    if contract?
+      # Sorry I know the spreadsheet has this third value for AL vs ALI pricing, but it's frankly easier to do here
+      self.contract_fee = subtotal * (0.08 / 0.92)
+    end
   end
 
   # validate

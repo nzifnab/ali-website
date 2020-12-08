@@ -23,7 +23,7 @@ class PurchasePriceSheet < GoogleSheet
     metadata = spreadsheet_service.get_spreadsheet_values(
       @sheet_id,
       "PurchasePrices!A1:AM",
-      date_time_render_option: :serial_number,
+      date_time_render_option: :formatted_string,
       value_render_option: :unformatted_value
     ).values
 

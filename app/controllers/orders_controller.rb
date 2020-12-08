@@ -16,12 +16,11 @@ class OrdersController < ApplicationController
 
   def create
     @order = Order.new(order_params)
-    @order.corp_member = corp_member?
 
     if @order.save
       redirect_to order_path(@order.token)
     else
-      @order.rebuild_for_form(corp_member?)
+      @order.rebuild_for_form(!corp_member?)
       render action: :new
     end
   end
@@ -57,13 +56,23 @@ class OrdersController < ApplicationController
 
   private
   def order_params
-    params.require(:order).permit(
+    prm = params.require(:order).permit(
       :player_name,
+      :corp_member_type,
       line_items_attributes: [
         :corp_stock_id,
         :price,
         :quantity
       ]
     )
+
+    if corp_member?
+      # Don't trust what users send. If they have the corp member cookie they may choose
+      # between AL (contracted items), or ALI (corp donation + free contract + audit timer)
+      prm[:corp_member_type] = (prm[:corp_member_type] == "donation" ? 'donation' : "contract")
+    else
+      prm[:corp_member_type] = 'external'
+    end
+    prm
   end
 end

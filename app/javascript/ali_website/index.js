@@ -97,7 +97,12 @@
       }, 1000);
     });
 
-
+    $(".js-option-contract-fee").on("click", function(e){
+      $(".js-contract-fee-table").removeClass("d-none");
+    })
+    $(".js-option-no-contract-fee").on("click", function(e){
+      $(".js-contract-fee-table").addClass("d-none");
+    })
 
     $(".js-review-order").on("show.bs.modal", function(e){
       resetTableSearch(table);
@@ -142,6 +147,10 @@
       if(stockMissing){
         $(".js-modal-stock-warning").show();
       }
+
+      contractFee = total * (0.08 / 0.92);
+      $(".js-contract-fee-value").text(formatMoney(contractFee, 0));
+      $(".js-contract-fee-final").text(formatMoney(contractFee + total, 0));
     });
   });
 })(jQuery);

@@ -30,30 +30,56 @@
         .col-md-8 &nbsp;
         .col-md-4
           = link_to "Cancel Order", order_path(@order.id, token: params[:token]), class: "btn btn-danger btn-block", method: :delete, "data-toggle" => "tooltip", "data-disable-with" => "Please Wait...", title: "This will cancel the order, this action is irreversible.", "data-confirm" => "Are you sure you want to cancel this order?"
-  %p
-    For:
-    - if @order.corp_member?
-      %span.badge.badge-primary ALI
-    = @order.player_name
 
-  .table-responsive
-    %table.table.table-striped.table-dark.table-hover
-      %thead
-        %tr
-          %th Item
-          %th Price Per Unit
-          %th Quantity
-          %th Total
-          %th
-            %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
-      %tbody
-        = render @order.line_items
+  .row.mb-3
+    .col-md-4
+      %ul.list-group
+        %li.list-group-item.list-group-item-dark
+          For:
+          - if @order.corp_member?
+            %span.badge.badge-primary= @order.corp_member_type == 'donation' ? "ALI" : "AL"
+          = @order.player_name
+        %li.list-group-item.list-group-item-dark
+          Order Date:
+          = @order.created_at.strftime("%d/%m/%Y")
 
-        %tr
-          %td &nbsp;
-          %td &nbsp;
-          %td.text-right
-            %strong Total:
-          %td
-            %strong= isk_currency @order.total
-          %td &nbsp;
+  .row
+    .col-12
+      .table-responsive
+        %table.table.table-striped.table-dark.table-hover
+          %thead
+            %tr
+              %th Item
+              %th Price Per Unit
+              %th Quantity
+              %th Total
+              %th
+                %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
+          %tbody
+            = render @order.line_items
+            - if @order.contract?
+              %tr
+                %td &nbsp;
+                %td &nbsp;
+                %td.text-right
+                  Subtotal:
+                %td
+                  = isk_currency @order.subtotal
+                %td &nbsp;
+
+              %tr
+                %td &nbsp;
+                %td &nbsp;
+                %td.text-right
+                  Contract Fee:
+                %td
+                  = isk_currency @order.contract_fee
+                %td &nbsp;
+            %tr
+              %td &nbsp;
+              %td &nbsp;
+              %td.text-right
+                %strong Total:
+              %td
+                %strong= isk_currency @order.total
+              %td &nbsp;
