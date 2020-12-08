@@ -21,7 +21,7 @@ class LineItem < ApplicationRecord
 
   # validate
   def external_order_above_fulfillment_quantity
-    # Fulfillment restriction never applies for ships, or corp members
+    # Fulfillment restriction never applies for ships, or corp members (AL or ALI)
     # Or if the 'desired stock' is 0, let the order go to negative and we'll
     # work on collecting it (IE: morphite)
     return if corp_stock.ship?
