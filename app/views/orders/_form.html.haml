@@ -23,7 +23,7 @@
           %td= li.object.corp_stock.item_type
           %td= li.label :quantity, li.object.corp_stock.item
           %td
-            %div{data: {toggle: "tooltip"}, title: "Data Updated: #{time_ago_in_words(li.object.corp_stock.price_updated_at)} ago"}
+            %div{data: {toggle: "tooltip"}, title: "Data Updated: #{time_ago_in_words(li.object.corp_stock.price_updated_on)} ago"}
               = isk_currency li.object.price, true
           %td
             - if li.object.corp_stock.purchaseable?(corp_member?)

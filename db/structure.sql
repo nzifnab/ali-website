@@ -33,7 +33,6 @@ CREATE TABLE public.corp_stocks (
     id bigint NOT NULL,
     item text,
     item_type text,
-    price_updated_at timestamp without time zone,
     external_sale_price numeric(15,2),
     desired_stock bigint,
     current_stock bigint,
@@ -42,7 +41,8 @@ CREATE TABLE public.corp_stocks (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     sale_valid boolean DEFAULT false NOT NULL,
-    purchase_price_metadata jsonb DEFAULT '{}'::jsonb
+    purchase_price_metadata jsonb DEFAULT '{}'::jsonb,
+    price_updated_on date
 );
 
 
@@ -256,6 +256,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201203093754'),
 ('20201205111951'),
 ('20201208072019'),
-('20201208080547');
+('20201208080547'),
+('20201209023701');
 
 

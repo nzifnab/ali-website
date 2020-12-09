@@ -62,4 +62,13 @@ class PurchasePriceSheet < GoogleSheet
 
     write_values_to_named_range("ItemStock", [values])
   end
+
+  def stock_last_updated_on
+    @stock_last_updated_on ||= Date.parse spreadsheet_service.get_spreadsheet_values(
+      @sheet_id,
+      "InventoryImport!B1",
+      date_time_render_option: :formatted_string,
+      value_render_option: :unformatted_value
+    ).values.flatten.first
+  end
 end

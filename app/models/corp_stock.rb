@@ -4,28 +4,62 @@ class CorpStock < ApplicationRecord
     # In case we later decide
     # not everything here should be listed
     # on the form.
-    all
+    where.not(item: "last_run_at").order(id: :asc)
   end
 
-  # Performed every couple hours via
+  def self.last_imported_on
+    last_run_entry.price_updated_on
+  end
+
+  def self.last_run_entry
+    @last_run_entry ||= CorpStock.where(item: "last_run_at").first_or_create(
+      sale_valid: false,
+      price_updated_on: 1.year.ago
+    )
+  end
+
+  # Performed every hour via
   # heroku scheduler & the
   # update_prices:go rake task
   def self.update_from_spreadsheet!
-    PurchasePriceSheet.data.each do |item_name, item_data|
-      Rails.logger.info("at=corp_stock type=info desc='Recording stock/price of #{item_name}'")
+    # In this "magic row", `price_updated_on` is actually the last time
+    # that the corp stock was updated from the spreadsheet.
+    last_run_entry = CorpStock.where(item: "last_run_at").first_or_create(
+      sale_valid: false,
+      price_updated_on: 1.year.ago
+    )
+    sheet = PurchasePriceSheet.new
+    stocks_recorded_on = sheet.stock_last_updated_on
+    stock_last_import_on = last_imported_on
+
+    sheet.data.each do |item_name, item_data|
+      Rails.logger.info("at=corp_stock type=info desc='Recording price of #{item_name}'")
       stock = CorpStock.where(item: item_name.strip).first_or_initialize
-      stock.assign_attributes(
-        price_updated_at: item_data["PriceLastUpdated"],
+      attrs = {
+        price_updated_on: item_data["PriceLastUpdated"],
         external_sale_price: num_from_string(item_data["ExternalSalePrice"]),
         desired_stock: num_from_string(item_data["DesiredStock"]),
-        current_stock: num_from_string(item_data["CurrentStock"]),
         corp_member_sale_price: num_from_string(item_data["CorpMemberSalePrice"]),
         buy_price: num_from_string(item_data["CurrentBuyPrice"]),
         item_type: item_data["Type"],
         sale_valid: item_data["SaleValid"],
         purchase_price_metadata: item_data[:metadata]
-      )
+      }
+
+      if stock_last_import_on < stocks_recorded_on
+        # _only_ update stocks from the spreadsheet if they have been manually updated
+        # since the last time they were recorded.
+        Rails.logger.info("at=corp_stock type=info desc='Recording stock of #{item_name}'")
+        attrs.merge(
+          current_stock: num_from_string(item_data["CurrentStock"])
+        )
+      end
+      stock.assign_attributes(attrs)
       stock.save!
+    end
+
+    if stock_last_import_on < stocks_recorded_on
+      last_run_entry.update_column(:price_updated_on, Date.current)
     end
   end
 

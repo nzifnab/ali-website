@@ -18,6 +18,10 @@ module AliWebsite
 
     config.active_record.schema_format = :sql
 
+    # GMT+0:00 to match the timestamps from
+    # the spreadsheets.
+    config.time_zone = "Europe/London"
+
 
     # To allow the website to authenticate against the google API
     # as a service account, make sure to set the following environment
