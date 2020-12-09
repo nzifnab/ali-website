@@ -35,7 +35,7 @@ CREATE TABLE public.corp_stocks (
     item_type text,
     external_sale_price numeric(15,2),
     desired_stock bigint,
-    current_stock bigint,
+    current_stock bigint DEFAULT 0 NOT NULL,
     corp_member_sale_price numeric(15,2),
     buy_price numeric(15,2),
     created_at timestamp(6) without time zone NOT NULL,
@@ -257,6 +257,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201205111951'),
 ('20201208072019'),
 ('20201208080547'),
-('20201209023701');
+('20201209023701'),
+('20201209201647');
 
 
