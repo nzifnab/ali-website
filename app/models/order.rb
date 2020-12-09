@@ -43,7 +43,8 @@ class Order < ApplicationRecord
   def complete!
     line_items.each do |line_item|
       stock = line_item.corp_stock
-      stock.update!(current_stock: stock.current_stock - line_item.quantity)
+      new_stock = [0, stock.current_stock - line_item.quantity].max
+      stock.update!(current_stock: new_stock)
     end
     update_column(:status, "complete")
   end
