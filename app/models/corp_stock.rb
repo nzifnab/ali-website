@@ -12,6 +12,8 @@ class CorpStock < ApplicationRecord
   end
 
   def self.last_run_entry
+    # In this "magic row", `price_updated_on` is actually the last time
+    # that the corp stock was updated from the spreadsheet.
     @last_run_entry ||= CorpStock.where(item: "last_run_at").first_or_create(
       sale_valid: false,
       price_updated_on: 1.year.ago
@@ -22,12 +24,6 @@ class CorpStock < ApplicationRecord
   # heroku scheduler & the
   # update_prices:go rake task
   def self.update_from_spreadsheet!
-    # In this "magic row", `price_updated_on` is actually the last time
-    # that the corp stock was updated from the spreadsheet.
-    last_run_entry = CorpStock.where(item: "last_run_at").first_or_create(
-      sale_valid: false,
-      price_updated_on: 1.year.ago
-    )
     sheet = PurchasePriceSheet.new
     stocks_recorded_on = sheet.stock_last_updated_on
     stock_last_import_on = last_imported_on
@@ -46,11 +42,11 @@ class CorpStock < ApplicationRecord
         purchase_price_metadata: item_data[:metadata]
       }
 
-      if stock_last_import_on < stocks_recorded_on
+      if ENV['FORCE_STOCK_RELOAD'] || stock_last_import_on < stocks_recorded_on
         # _only_ update stocks from the spreadsheet if they have been manually updated
         # since the last time they were recorded.
         Rails.logger.info("at=corp_stock type=info desc='Recording stock of #{item_name}'")
-        attrs.merge(
+        attrs = attrs.merge(
           current_stock: num_from_string(item_data["CurrentStock"])
         )
       end
