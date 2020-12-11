@@ -1,0 +1,13 @@
+- order.out_of_stock_line_items.each do |line_item|
+  %tr
+    %td= line_item.corp_stock.item
+    %td
+      - if order.donation?
+        = isk_currency line_item.out_of_stock_buy_price
+      - elsif order.contract?
+        = isk_currency line_item.corp_margin(:contract)
+      - else
+        = isk_currency line_item.corp_margin(:external)
+    - if !@order.donation?
+      %td
+        = isk_currency line_item.price_without_contract_fee

@@ -15,7 +15,7 @@
       = link_to "Cancelled", orders_path(status: "cancelled"), class: "btn btn-#{@status == 'cancelled' ? 'primary' : 'secondary'} mb-1 btn-block"
 
     .col-md-6
-      = link_to_tracker_spreadsheet
+      -# = link_to_tracker_spreadsheet
 
   .table-responsive
     %table.table.table-striped.table-dark.table-hover.table-sm

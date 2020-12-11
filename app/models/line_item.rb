@@ -13,8 +13,36 @@ class LineItem < ApplicationRecord
     price * quantity
   end
 
+  def price_without_contract_fee
+    # Perhaps mistakenly, contract/AL orders dont' include contract fee
+    # in this total, but external orders do. So we'll subtract contract fee from
+    # only the external ones :P
+    if order.contract?
+      price
+    else
+      price * 0.92
+    end
+  end
+
   def pending_stock?
     quantity > corp_stock.current_stock
+  end
+
+  def out_of_stock_buy_price
+    purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f
+  end
+
+  def corp_margin(type)
+    if type == :external
+      # For the corp margin, first we take off the contract fee, then
+      # we subtract the BreakEvenSalePrice amount
+      purchase_price_metadata["ExternalSalePrice"].to_f * 0.92 - purchase_price_metadata["BreakEvenSalePrice"].to_f
+    else
+      # For AL purchases, we can use the CorpMemberSaleCorpMargin
+      # which is just taking the corp member sale price (already has contract
+      # fee removed) minus the break even sale price
+      purchase_price_metadata["CorpMemberSaleCorpMargin"].to_f
+    end
   end
 
   private

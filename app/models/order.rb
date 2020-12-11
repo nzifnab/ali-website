@@ -84,6 +84,50 @@ class Order < ApplicationRecord
     corp_member_type == "contract"
   end
 
+  def donation?
+    corp_member_type == "donation"
+  end
+
+  def external?
+    corp_member_type == "external"
+  end
+
+  def includes_in_stock_items?
+    stock_status[:one_in_stock]
+  end
+
+  def includes_out_of_stock_items?
+    stock_status[:one_out_of_stock]
+  end
+
+  def in_stock?
+    stock_status[:all_in_stock]
+  end
+
+  def stock_status
+    @stock_status ||= begin
+      status_result = {
+        all_in_stock: true,
+        one_in_stock: false,
+        one_out_of_stock: false
+      }
+
+      line_items.each do |li|
+        if li.pending_stock?
+          status_result[:all_in_stock] = false
+          status_result[:one_out_of_stock] = true
+        else
+          status_result[:one_in_stock] = true
+        end
+      end
+      status_result
+    end
+  end
+
+  def out_of_stock_line_items
+    line_items.select(&:pending_stock?)
+  end
+
   private
 
   # before_create

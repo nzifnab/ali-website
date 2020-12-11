@@ -86,14 +86,18 @@
     $("[data-toggle]").tooltip();
 
     var clipboard = new ClipboardJS("[data-clipboard-target]");
-    clipboard.on("success", function(e) {
-      $(e.trigger).tooltip({title: "Copied!"});
+    $("[data-clipboard-target]").tooltip({title: "Click to Copy"})
+    $("[data-clipboard-target]").on("click", function(e){ e.preventDefault(); });
+    clipboard.on("success", function (e) {
+      $(e.trigger).tooltip("dispose");
+      $(e.trigger).tooltip({ title: "Copied!" });
       $(e.trigger).tooltip("enable");
       $(e.trigger).tooltip("show");
 
+
       setTimeout(function(){
-        $(e.trigger).tooltip("hide");
-        $(e.trigger).tooltip("disable");
+        $(e.trigger).tooltip("dispose");
+        $(e.trigger).tooltip({title: "Click to Copy"})
       }, 1000);
     });
 

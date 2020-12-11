@@ -19,7 +19,7 @@
               = image_tag("clippy.svg", width: "13", alt: "Copy to clipboard", class: "clippy")
 
       .col-md-4
-        = link_to_tracker_spreadsheet
+        -# = link_to_tracker_spreadsheet
 
       .col-md-4
         - if @admin && @order.pending?
@@ -43,43 +43,154 @@
           Order Date:
           = @order.created_at.strftime("%d/%m/%Y")
 
-  .row
-    .col-12
-      .table-responsive
-        %table.table.table-striped.table-dark.table-hover
-          %thead
-            %tr
-              %th Item
-              %th Price Per Unit
-              %th Quantity
-              %th Total
-              %th
-                %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
-          %tbody
-            = render @order.line_items
-            - if @order.contract?
-              %tr
-                %td &nbsp;
-                %td &nbsp;
-                %td.text-right
-                  Subtotal:
-                %td
-                  = isk_currency @order.subtotal
-                %td &nbsp;
+  %table.table.table-striped.table-dark.table-hover
+    %thead
+      %tr
+        %th Item
+        %th Price Per Unit
+        %th Quantity
+        %th Total
+        %th
+          %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
+    %tbody
+      = render @order.line_items
+      - if @order.contract?
+        %tr
+          %td &nbsp;
+          %td &nbsp;
+          %td.text-right
+            Subtotal:
+          %td
+            = isk_currency @order.subtotal
+          %td &nbsp;
 
+        %tr
+          %td &nbsp;
+          %td &nbsp;
+          %td.text-right
+            Contract Fee:
+          %td
+            = isk_currency @order.contract_fee
+          %td &nbsp;
+      %tr
+        %td &nbsp;
+        %td &nbsp;
+        %td.text-right
+          %strong Total:
+        %td
+          %strong= isk_currency @order.total
+        %td &nbsp;
+
+  .row
+    .col-md-5.bg-secondary.rounded.border
+      .mb-4
+        %h3.text-center Customer
+
+        %ul
+          - if @order.donation?
+            %li Donate #{isk_currency @order.total} ISK to the ALI wallet
+            %li
+              Post a screenshot of your donation and the
+              = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
+              to this order in the <code>#we-sell-contracts</code> discord channel.
+            - if @order.includes_in_stock_items?
+              %li
+                For items that are in stock, an <strong>ALI Officer</strong> will move your items
+                directly to Hangar 3 in YZ-LQL for immediate withdrawal.
+            - if @order.includes_out_of_stock_items?
+              %li
+                For items not in stock, a manufacturer or miner will begin
+                construction of your ships, modules, or rigs, and deposit them
+                into hangar 3 when complete, for withdrawal.
+            %li
+              <em>You will be notified via discord when your item(s) are ready
+              for withdrawal</em>
+          - else
+            %li
+              Post a
+              = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
+              to this order in the
+              - if @order.external?
+                = link_to "<code>#visitors-lounge</code>".html_safe, Rails.application.config.discord_invite_link
+              - else
+                %code #we-sell-contracts
+              discord channel.
+            - if @order.in_stock?
+              %li Everything appears to be in stock
+              %li
+                You will receive a contract for these items in the amount of #{isk_currency @order.total}
+                - if @order.contract?
+                  , which covers the 8% broker's fee of #{isk_currency @order.contract_fee}
+            - else
+              %li One or more of these items are out of stock.
+              %li Allow some time for the requested items to be manufactured or gathered.
+
+              %li
+                You will receive a contract for these items in the amount of #{isk_currency @order.total}
+                - if @order.contract?
+                  , which covers the 8% broker's fee of #{isk_currency @order.contract_fee}
+    .col-md-1 &nbsp;
+
+    .col-md-6.bg-secondary.rounded.border
+      .mb-4
+        %h3.text-center Fulfillment Officer
+        - if @order.total >= 100_000_000
+          %li Verify the legitimacy of the order with the customer first. (Value > 100m)
+        - if @order.includes_out_of_stock_items?
+          %li
+            Some of these items do not appear to be in stock
+            %ul
+              %li
+                A manufacturer may claim a manu job for this order in the
+                - if @order.external?
+                  %code #visitors-lounge
+                - else
+                  %code #we-sell-contracts
+                discord channel by quoting the original order post (claiming via the website coming soon)
+              %li
+                Purchase materials necessary for the build on the
+                = link_to "Buy From ALI", new_order_path
+                page. Use the <code>#blueprints-lookup</code> discord channel/bot
+                for a list of materials.
+              %li For ships, it is recommended to have 5/5/3 or better skills to not lose money manufacturing.
+              %li For blueprints, 5/4/0 can get you pretty far, but 5/5/3 is recommended for battlecruisers or faction ships, and 5/5/5 for faction battleships.
+        - if @order.donation?
+          %li If everything is in stock, verify the donation and then move the purchased items to hangar 3 in YZ-LQL
+          %li Contact the customer on discord in <code>#we-sell-contracts</code> and let them know their item(s) are ready for pickup.
+
+          - if @order.includes_out_of_stock_items?
+            %li
+              <strong>Since this order contains out-of-stock items</strong> only those
+              with withdrawal access to the corp wallet may provide these items, since
+              contract fees are eliminated for corp member purchases.
+        - else
+          %li
+            contract the items to
+            = link_to @order.player_name, "#", data: {clipboard_target: ".js-copy-player-name"}, class: "js-copy-player-name"
+            for #{isk_currency @order.total}
+
+        - if @order.includes_out_of_stock_items?
+          %li
+            Since some items were out of stock, use the following table to
+            - if @order.donation?
+              determine how much isk to withdraw from corp for your manufacturing services.
+            - else
+              determine how much isk to donate to corp wallet.
+            Be sure to screenshot your transaction and put it in the <code>#we-sell-contracts</code> discord channel.
+          .mb-3
+          %table.table.table-striped.text-light
+            %thead
               %tr
-                %td &nbsp;
-                %td &nbsp;
-                %td.text-right
-                  Contract Fee:
-                %td
-                  = isk_currency @order.contract_fee
-                %td &nbsp;
-            %tr
-              %td &nbsp;
-              %td &nbsp;
-              %td.text-right
-                %strong Total:
-              %td
-                %strong= isk_currency @order.total
-              %td &nbsp;
+                %th Item
+                %th= @order.donation? ? "Withdraw<br>Per Item".html_safe : "Donate<br>Per Item<br>(manufactured)".html_safe
+                - if !@order.donation?
+                  %th
+                    Donate
+                    %br
+                    Per Item
+                    %br
+                    (from corp stock)
+            %tbody
+              = render partial: "line_items/fulfillment_table", locals: {order: @order}
+          .mb-3
+        %li Once complete, mark the order as complete via the admin interface. (better admin and order status functionality coming soon).
