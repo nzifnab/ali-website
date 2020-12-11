@@ -168,6 +168,11 @@
             contract the items to
             = link_to @order.player_name, "#", data: {clipboard_target: ".js-copy-player-name"}, class: "js-copy-player-name"
             for #{isk_currency @order.total}
+          - unless @order.includes_out_of_stock_items?
+            %li
+              Deposit
+              = isk_currency @order.total_without_contract_fee
+              to the corp wallet (the remainder covers contract fees)
 
         - if @order.includes_out_of_stock_items?
           %li

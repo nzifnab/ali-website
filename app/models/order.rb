@@ -75,6 +75,13 @@ class Order < ApplicationRecord
     subtotal + contract_fee
   end
 
+  def total_without_contract_fee
+    # I should probably fix this; external orders
+    # dont' record contract fee separately, but
+    # AL orders do :P
+    contract? ? subtotal : (total * 0.92)
+  end
+
   def corp_member?
     corp_member_type != "external"
   end
