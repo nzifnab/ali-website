@@ -88,7 +88,7 @@ class CorpStock < ApplicationRecord
     # Allow bp's to be ordered by corp members regardless of stock level, as long
     # as the pricing info is recent. If not in stock a RE'er can/should handle the
     # request.
-    return true if corp_member_flag && blueprint? && price_up_tO_date?
+    return true if corp_member_flag && blueprint? && price_up_to_date?
 
 
     false
