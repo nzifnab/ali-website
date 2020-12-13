@@ -71,6 +71,10 @@ class CorpStock < ApplicationRecord
     item_type == "Blueprint"
   end
 
+  def price_up_to_date?
+    7.days.ago < price_updated_on
+  end
+
   def purchaseable?(corp_member_flag)
     # Always buyable if 'sale valid' flag is true
     return true if sale_valid?
@@ -80,6 +84,11 @@ class CorpStock < ApplicationRecord
     # because that almost certainly means the pricing or blueprint info is out
     # of date
     return true if current_stock > 0 && corp_member_flag && !ship?
+
+    # Allow bp's to be ordered by corp members regardless of stock level, as long
+    # as the pricing info is recent. If not in stock a RE'er can/should handle the
+    # request.
+    return true if corp_member_flag && blueprint? && price_up_tO_date?
 
 
     false
