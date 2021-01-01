@@ -1,6 +1,10 @@
 module OrdersHelper
   def isk_currency(val, include_decimals = false)
-    number_to_currency val, unit: "Ƶ", precision: (include_decimals ? 2 : 0)
+    precision = (include_decimals ? 2 : 0)
+    if val >= 100_000
+      precision = 0
+    end
+    number_to_currency val, unit: "Ƶ", precision: precision
   end
 
   def order_status_badge_class(order)

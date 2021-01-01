@@ -14,13 +14,13 @@ class LineItem < ApplicationRecord
   end
 
   def price_without_contract_fee
-    # Perhaps mistakenly, contract/AL orders dont' include contract fee
+    # Perhaps mistakenly, contract/AL orders don't include contract fee
     # in this total, but external orders do. So we'll subtract contract fee from
     # only the external ones :P
     if order.contract?
-      price
+      price - blueprint_price_reduction
     else
-      price * 0.92
+      (price - blueprint_price_reduction) * 0.92
     end
   end
 
@@ -28,21 +28,65 @@ class LineItem < ApplicationRecord
     quantity > corp_stock.current_stock
   end
 
-  def out_of_stock_buy_price
-    purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f
+  def corp_member_manufacturing_withdrawal_fee
+    bp_reduction = if blueprint_provided?
+      purchase_price_metadata["ShipBlueprintSellPrice"].to_f
+    else
+      0
+    end
+    purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
   end
 
   def corp_margin(type)
     if type == :external
+      bp_reduction = if blueprint_provided?
+        # This 0.08 is the corp margin on external ship sales
+        purchase_price_metadata["ShipBlueprintSellPrice"].to_f * 0.08
+      else
+        0
+      end
+
+      # breakeven = y
+      # external = y * 1.08 / 0.92
+
+      # external * 0.92 - breakeven
+      # (y * 1.08 / 0.92) * 0.92 - y
+      # y * 1.08 - y
+      # 1.08y - y
+      # 0.08y
+
       # For the corp margin, first we take off the contract fee, then
-      # we subtract the BreakEvenSalePrice amount
-      purchase_price_metadata["ExternalSalePrice"].to_f * 0.92 - purchase_price_metadata["BreakEvenSalePrice"].to_f
+      # we subtract the BreakEvenSalePrice amount, then we remove any amount
+      # the blueprint would've added, if the customer is supplying it.
+      purchase_price_metadata["ExternalSalePrice"].to_f * 0.92 - purchase_price_metadata["BreakEvenSalePrice"].to_f - bp_reduction
     else
+      bp_reduction = if blueprint_provided?
+        # This 0.04 is the corp margin on internal/corp ship sales.
+        purchase_price_metadata["ShipBlueprintSellPrice"].to_f * 0.04
+      else
+        0
+      end
       # For AL purchases, we can use the CorpMemberSaleCorpMargin
       # which is just taking the corp member sale price (already has contract
       # fee removed) minus the break even sale price
-      purchase_price_metadata["CorpMemberSaleCorpMargin"].to_f
+      purchase_price_metadata["CorpMemberSaleCorpMargin"].to_f - bp_reduction
     end
+  end
+
+  def blueprint_price_reduction
+    return 0 unless corp_stock.ship?
+    return 0 unless blueprint_provided?
+
+    bp_raw_cost = if purchase_price_metadata.blank?
+      corp_stock.purchase_price_metadata["ShipBlueprintSellPrice"].to_f
+    else
+      purchase_price_metadata["ShipBlueprintSellPrice"].to_f
+    end
+
+    sale_modifier = (order.corp_member? ? 1.04 : 1.08)
+    contract_modifier = (order.corp_member? ? 1 : 0.92)
+
+    return (bp_raw_cost * sale_modifier / contract_modifier)
   end
 
   private

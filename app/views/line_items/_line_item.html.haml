@@ -13,3 +13,7 @@
         No
     - else
       Yes
+- if line_item.blueprint_provided?
+  %tr
+    %td{colspan: '3'} Customer Supplies #{line_item.corp_stock.item} BP(s):
+    %td{colspan: '2'}= isk_currency -line_item.blueprint_price_reduction * line_item.quantity

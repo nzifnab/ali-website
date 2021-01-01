@@ -13,12 +13,12 @@
 
 
         .table-responsive
-          %table.table.table-striped.table-dark.table-hover
+          %table.table.table-dark.table-hover
             %thead
               %tr
                 %th Item
-                %th Price Per Unit
-                %th Quantity
+                %th Price/Unit
+                %th Qty
                 %th Total
                 %th
                   %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."}
@@ -30,6 +30,7 @@
                 %th &nbsp;
                 %th &nbsp;
                 %th.js-modal-total &nbsp;
+                %th &nbsp;
 
         .alert.alert-danger.js-modal-stock-warning{role: "alert"}
           Some selected items do not have sufficient stock

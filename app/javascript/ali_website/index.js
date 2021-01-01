@@ -51,7 +51,7 @@
     $(".js-item-quantity").popover(
       {
         trigger: "manual",
-        placement: "left"
+        placement: "top"
       }
     )
 
@@ -129,20 +129,54 @@
         var subtotal = quantity * price;
 
         var inStock = (stock >= quantity);
-        console.log("stockMissing: " + stockMissing + ", inStock: " + inStock);
         stockMissing ||= !inStock;
 
+        var $baseBlueprintCheckbox = $quantityField.closest(".corp_stock").find(".js-blueprint-checkbox");
+        var $reviewBlueprintCheckbox = $baseBlueprintCheckbox.clone().show().prop("disabled", false).attr('id', $baseBlueprintCheckbox.attr('id') + '_clone');
+
+        $reviewBlueprintCheckbox.data("quantity", quantity);
+
+        if($baseBlueprintCheckbox.data("force-checked")) {
+          $reviewBlueprintCheckbox.
+            prop("checked", true).
+            prop("disabled", true)
+          total -= (quantity * Number($baseBlueprintCheckbox.data("price-reduction")));
+        }
+
+        var displayPrice = (price < 100000 ? formatMoney(price) : formatMoney(price, 0))
         $htmlLine = $(`
-          <tr>
+          <tr class='js-modal-line'>
             <td>${item}</td>
-            <td>${formatMoney(price)}</td>
+            <td>${displayPrice}</td>
             <td>${formatMoney(quantity, 0, "")}</td>
             <td>${formatMoney(subtotal, 0)}</td>
             <td>${inStock ? 'Yes' : 'NO'}</td>
           </tr>
         `);
+        $htmlLine.data("modal-line-total", subtotal);
+        var $line2 = $("");
+        if($baseBlueprintCheckbox.length > 0){
+          $line2 = $(`
+            <tr class='js-modal-line'>
+              <td colspan='3' class='js-bp-checkbox-cell'>
+                <label for="${$reviewBlueprintCheckbox.attr('id')}">Providing Blueprint?</label>
+              </td>
+              <td colspan='2' class='js-bp-price-reduction'>
 
-        $(".js-review-order-body").append($htmlLine);
+              </td>
+            </tr>
+          `);
+          if($baseBlueprintCheckbox.data("force-checked")) {
+            var lineTotal = -$baseBlueprintCheckbox.data("price-reduction") * quantity;
+            $line2.find(".js-bp-price-reduction").html(formatMoney(lineTotal, 0));
+            $line2.data("modal-line-total", lineTotal);
+          } else {
+            $line2.data("modal-line-total", 0);
+          }
+          $line2.find(".js-bp-checkbox-cell").prepend($reviewBlueprintCheckbox);
+        }
+
+        $(".js-review-order-body").append($htmlLine).append($line2);
 
         total += subtotal;
       });
@@ -151,6 +185,29 @@
       if(stockMissing){
         $(".js-modal-stock-warning").show();
       }
+
+      contractFee = total * (0.08 / 0.92);
+      $(".js-contract-fee-value").text(formatMoney(contractFee, 0));
+      $(".js-contract-fee-final").text(formatMoney(contractFee + total, 0));
+    });
+
+    $(".js-review-order").on("change", ".js-blueprint-checkbox", function(e){
+      var qty = Number($(this).data("quantity"));
+      var lineTotal = qty * $(this).data("price-reduction");
+
+      if($(this).prop("checked")) {
+        $(this).closest("tr").find(".js-bp-price-reduction").html(formatMoney(-lineTotal, 0));
+        $(this).closest("tr").data("modal-line-total", -lineTotal);
+      } else {
+        $(this).closest("tr").find(".js-bp-price-reduction").html("");
+        $(this).closest("tr").data("modal-line-total", 0);
+      }
+
+      var total = 0;
+      $(".js-modal-line").each(function(){
+        total += Number($(this).data("modal-line-total"));
+      });
+      $(".js-modal-total").html(formatMoney(total, 0));
 
       contractFee = total * (0.08 / 0.92);
       $(".js-contract-fee-value").text(formatMoney(contractFee, 0));

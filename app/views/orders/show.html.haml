@@ -111,7 +111,7 @@
               = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
               to this order in the
               - if @order.external?
-                = link_to "<code>#visitors-lounge</code>".html_safe, Rails.application.config.discord_invite_link
+                = link_to "<code>#reception-desk</code>".html_safe, Rails.application.config.discord_invite_link
               - else
                 %code #we-sell-contracts
               discord channel.
@@ -136,6 +136,8 @@
         %h3.text-center Fulfillment Officer
         - if @order.total >= 100_000_000
           %li Verify the legitimacy of the order with the customer first. (Value > 100m)
+        - if @order.any_blueprints_supplied_by_customer?
+          %li Collect all blueprints indicated in the order from the customer.
         - if @order.includes_out_of_stock_items?
           %li
             Some of these items do not appear to be in stock
@@ -143,7 +145,7 @@
               %li
                 A manufacturer may claim a manu job for this order in the
                 - if @order.external?
-                  %code #visitors-lounge
+                  %code #reception-desk
                 - else
                   %code #we-sell-contracts
                 discord channel by quoting the original order post (claiming via the website coming soon)
@@ -160,9 +162,7 @@
 
           - if @order.includes_out_of_stock_items?
             %li
-              <strong>Since this order contains out-of-stock items</strong> only those
-              with withdrawal access to the corp wallet may provide these items, since
-              contract fees are eliminated for corp member purchases.
+              A manufacturer filling this order must have withdrawal access to the corp wallet.
         - else
           %li
             contract the items to
@@ -187,7 +187,7 @@
             %thead
               %tr
                 %th Item
-                %th= @order.donation? ? "Withdraw<br>Per Item".html_safe : "Donate<br>Per Item<br>(manufactured)".html_safe
+                %th= @order.donation? ? "Withdraw<br>Per Item<br>Manufactured".html_safe : "Donate<br>Per Item<br>(manufactured)".html_safe
                 - if !@order.donation?
                   %th
                     Donate

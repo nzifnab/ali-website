@@ -62,7 +62,8 @@ class OrdersController < ApplicationController
       line_items_attributes: [
         :corp_stock_id,
         :price,
-        :quantity
+        :quantity,
+        :blueprint_provided
       ]
     )
 

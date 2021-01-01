@@ -13,7 +13,7 @@ class Order < ApplicationRecord
   def self.order_for_form(external=true)
     order = new
 
-    CorpStock.purchaseable.each do |stock|
+    CorpStock.purchaseable.preload(:blueprint).each do |stock|
       price = external ? stock.external_sale_price : stock.corp_member_sale_price
       order.line_items.build(corp_stock: stock, price: price)
     end
@@ -107,6 +107,10 @@ class Order < ApplicationRecord
     stock_status[:one_out_of_stock]
   end
 
+  def any_blueprints_supplied_by_customer?
+    stock_status[:bp_supplied]
+  end
+
   def in_stock?
     stock_status[:all_in_stock]
   end
@@ -116,7 +120,8 @@ class Order < ApplicationRecord
       status_result = {
         all_in_stock: true,
         one_in_stock: false,
-        one_out_of_stock: false
+        one_out_of_stock: false,
+        bp_supplied: false
       }
 
       line_items.each do |li|
@@ -125,6 +130,9 @@ class Order < ApplicationRecord
           status_result[:one_out_of_stock] = true
         else
           status_result[:one_in_stock] = true
+        end
+        if li.blueprint_provided?
+          status_result[:bp_supplied] = true
         end
       end
       status_result
@@ -144,7 +152,12 @@ class Order < ApplicationRecord
     tot = 0
     line_items.each do |li|
       li.price = (corp_member? ? li.corp_stock.corp_member_sale_price : li.corp_stock.external_sale_price)
-      tot += (li.price * li.quantity)
+
+      if li.corp_stock.require_blueprint_provided?
+        li.blueprint_provided = true
+      end
+
+      tot += (li.price * li.quantity) - (li.blueprint_price_reduction * li.quantity)
     end
     self.subtotal = tot
 

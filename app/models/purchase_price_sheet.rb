@@ -22,7 +22,7 @@ class PurchasePriceSheet < GoogleSheet
     names = values_from_named_range("ItemNamesPublic").flatten
     metadata = spreadsheet_service.get_spreadsheet_values(
       @sheet_id,
-      "PurchasePrices!A1:AM",
+      "PurchasePrices!A1:AO",
       date_time_render_option: :formatted_string,
       value_render_option: :unformatted_value
     ).values
