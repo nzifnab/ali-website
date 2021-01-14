@@ -3,7 +3,7 @@
     %td= line_item.corp_stock.item
     %td
       - if order.donation?
-        = isk_currency line_item.corp_member_manufacturing_withdrawal_fee
+        = isk_currency line_item.donation_sale_manufacturing_withdrawal_fee
       - else
         = isk_currency line_item.profit_margin_for(:total)
     - if !@order.donation?
