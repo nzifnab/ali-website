@@ -59,13 +59,16 @@ class LineItem < ApplicationRecord
       margin_percent = 1
     end
 
-    bp_reduction = if blueprint_provided?
-      # If customer is providing BP, we also need to reduce the calculated profit margin to
-      # exclude the value from the bp.
-      purchase_price_metadata["ShipBlueprintSellPrice"].to_f * settings[buyer_type == :external ? :external_ship_profit_margin : :corp_member_ship_profit_margin]
-    else
-      0
-    end
+    # bp_reduction = if blueprint_provided?
+    #   # If customer is providing BP, we also need to reduce the calculated profit margin to
+    #   # exclude the value from the bp.
+    #   purchase_price_metadata["ShipBlueprintSellPrice"].to_f * settings[buyer_type == :external ? :external_ship_profit_margin : :corp_member_ship_profit_margin]
+    # else
+    #   0
+    # end
+    # Since I changed ship sales to not mark up the bp cost with our margins, there is no need to reduce
+    # the profit margin based on the bp
+    bp_reduction = 0
 
     alliance_contract_multiplier = if corp_or_alliance == :alliance && corp_stock.ship?
       # Contracts sent to someone with only isk will immediately charge _you_ 4%,
