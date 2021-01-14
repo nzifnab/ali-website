@@ -117,7 +117,8 @@ CREATE TABLE public.orders (
     status text DEFAULT 'pending'::text NOT NULL,
     admin_token text,
     corp_member_type text DEFAULT 'external'::text NOT NULL,
-    contract_fee bigint DEFAULT 0 NOT NULL
+    contract_fee bigint DEFAULT 0 NOT NULL,
+    setting_data_id bigint
 );
 
 
@@ -150,6 +151,37 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: setting_data; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.setting_data (
+    id bigint NOT NULL,
+    settings jsonb,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: setting_data_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.setting_data_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: setting_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.setting_data_id_seq OWNED BY public.setting_data.id;
+
+
+--
 -- Name: corp_stocks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -168,6 +200,13 @@ ALTER TABLE ONLY public.line_items ALTER COLUMN id SET DEFAULT nextval('public.l
 --
 
 ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.orders_id_seq'::regclass);
+
+
+--
+-- Name: setting_data id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.setting_data ALTER COLUMN id SET DEFAULT nextval('public.setting_data_id_seq'::regclass);
 
 
 --
@@ -211,6 +250,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: setting_data setting_data_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.setting_data
+    ADD CONSTRAINT setting_data_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: index_line_items_on_corp_stock_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -225,11 +272,26 @@ CREATE INDEX index_line_items_on_order_id ON public.line_items USING btree (orde
 
 
 --
+-- Name: index_orders_on_setting_data_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_orders_on_setting_data_id ON public.orders USING btree (setting_data_id);
+
+
+--
 -- Name: line_items fk_rails_2dc2e5c22c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.line_items
     ADD CONSTRAINT fk_rails_2dc2e5c22c FOREIGN KEY (order_id) REFERENCES public.orders(id);
+
+
+--
+-- Name: orders fk_rails_4cd4f0feac; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT fk_rails_4cd4f0feac FOREIGN KEY (setting_data_id) REFERENCES public.setting_data(id);
 
 
 --
@@ -262,6 +324,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201208080547'),
 ('20201209023701'),
 ('20201209201647'),
-('20201231213309');
+('20201231213309'),
+('20210114040329'),
+('20210114094529');
 
 

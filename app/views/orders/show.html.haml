@@ -111,7 +111,7 @@
               = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
               to this order in the
               - if @order.external?
-                = link_to "<code>#reception-desk</code>".html_safe, Rails.application.config.discord_invite_link
+                = link_to "<code>#public-chat</code>".html_safe, Rails.application.config.discord_invite_link
               - else
                 %code #we-sell-contracts
               discord channel.
@@ -120,7 +120,7 @@
               %li
                 You will receive a contract for these items in the amount of #{isk_currency @order.total}
                 - if @order.contract?
-                  , which covers the 8% broker's fee of #{isk_currency @order.contract_fee}
+                  , which covers the #{SettingData[:contract_fee] * 100}% broker's fee of #{isk_currency @order.contract_fee}
             - else
               %li One or more of these items are out of stock.
               %li Allow some time for the requested items to be manufactured or gathered.
@@ -128,7 +128,7 @@
               %li
                 You will receive a contract for these items in the amount of #{isk_currency @order.total}
                 - if @order.contract?
-                  , which covers the 8% broker's fee of #{isk_currency @order.contract_fee}
+                  , which covers the #{SettingData[:contract_fee] * 100}% broker's fee of #{isk_currency @order.contract_fee}
     .col-md-1 &nbsp;
 
     .col-md-6.bg-secondary.rounded.border
@@ -143,21 +143,19 @@
             Some of these items do not appear to be in stock
             %ul
               %li
-                A manufacturer may claim a manu job for this order in the
+                Mark the post in the
                 - if @order.external?
-                  %code #reception-desk
+                  %code #public-chat
                 - else
                   %code #we-sell-contracts
-                discord channel by quoting the original order post (claiming via the website coming soon)
+                discord channel with a :notepad_spiral emoji to indicate you are working the order. (claiming via the website coming soon)
               %li
                 Purchase materials necessary for the build on the
                 = link_to "Buy From ALI", new_order_path
                 page. Use the <code>#blueprints-lookup</code> discord channel/bot
                 for a list of materials.
-              %li For ships, it is recommended to have 5/5/3 or better skills to not lose money manufacturing.
-              %li For blueprints, 5/4/0 can get you pretty far, but 5/5/3 is recommended for battlecruisers or faction ships, and 5/5/5 for faction battleships.
         - if @order.donation?
-          %li If everything is in stock, verify the donation and then move the purchased items to hangar 3 in YZ-LQL
+          %li If everything is in stock, verify the donation and then move the purchased items to hangar 3 in 4-EFLU
           %li Contact the customer on discord in <code>#we-sell-contracts</code> and let them know their item(s) are ready for pickup.
 
           - if @order.includes_out_of_stock_items?
@@ -198,4 +196,14 @@
             %tbody
               = render partial: "line_items/fulfillment_table", locals: {order: @order}
           .mb-3
-        %li Once complete, mark the order as complete via the admin interface. (better admin and order status functionality coming soon).
+        %li Once complete, mark the order as complete via the admin interface, and mark the order post with a :white_check_mark emoji. (better admin and order status functionality coming soon).
+
+        - if @order.includes_alliance_margin?
+          %li
+            Some items are eligible for alliance profit margin. Please copy-paste the following lines into the <code>#alliance-ship-margin-log</code> discord channel:
+            %br
+            %br
+            - @order.line_items.each do |li|
+              - if li.alliance_margin?
+                #{li.corp_stock.item}: #{isk_currency li.profit_margin_for(:alliance)}
+                %br

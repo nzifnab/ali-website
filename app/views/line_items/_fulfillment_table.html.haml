@@ -4,10 +4,8 @@
     %td
       - if order.donation?
         = isk_currency line_item.corp_member_manufacturing_withdrawal_fee
-      - elsif order.contract?
-        = isk_currency line_item.corp_margin(:contract)
       - else
-        = isk_currency line_item.corp_margin(:external)
+        = isk_currency line_item.profit_margin_for(:total)
     - if !@order.donation?
       %td
         = isk_currency line_item.price_without_contract_fee

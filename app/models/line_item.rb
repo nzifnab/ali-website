@@ -9,6 +9,8 @@ class LineItem < ApplicationRecord
 
   before_create :store_metadata_snapshot
 
+  delegate :settings, to: :order
+
   def total
     price * quantity
   end
@@ -20,7 +22,7 @@ class LineItem < ApplicationRecord
     if order.contract?
       price - blueprint_price_reduction
     else
-      (price - blueprint_price_reduction) * 0.92
+      (price - blueprint_price_reduction) * settings[:contract_multiplier]
     end
   end
 
@@ -28,7 +30,14 @@ class LineItem < ApplicationRecord
     quantity > corp_stock.current_stock
   end
 
-  def corp_member_manufacturing_withdrawal_fee
+  def alliance_margin?
+    corp_stock.ship?
+  end
+
+  # For ALI purchases where funds were donated to corp wallet,
+  # this is the amount of money the builder should withdraw from corp, given
+  # they manufactured this item and contracted it direct to consumer.
+  def donation_sale_manufacturing_withdrawal_fee
     bp_reduction = if blueprint_provided?
       purchase_price_metadata["ShipBlueprintSellPrice"].to_f
     else
@@ -37,40 +46,35 @@ class LineItem < ApplicationRecord
     purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
   end
 
-  def corp_margin(type)
-    if type == :external
-      bp_reduction = if blueprint_provided?
-        # This 0.08 is the corp margin on external ship sales
-        purchase_price_metadata["ShipBlueprintSellPrice"].to_f * 0.08
-      else
-        0
-      end
 
-      # breakeven = y
-      # external = y * 1.08 / 0.92
+  def profit_margin_for(corp_or_alliance)
+    buyer_type = (order.contract? || order.donation?) ? :corp : :external
 
-      # external * 0.92 - breakeven
-      # (y * 1.08 / 0.92) * 0.92 - y
-      # y * 1.08 - y
-      # 1.08y - y
-      # 0.08y
+    # Where `buyer_type` is `:corp` or `:external`
+    margin_percent = SettingData["#{corp_or_alliance}_profit_percent"]
 
-      # For the corp margin, first we take off the contract fee, then
-      # we subtract the BreakEvenSalePrice amount, then we remove any amount
-      # the blueprint would've added, if the customer is supplying it.
-      purchase_price_metadata["ExternalSalePrice"].to_f * 0.92 - purchase_price_metadata["BreakEvenSalePrice"].to_f - bp_reduction
-    else
-      bp_reduction = if blueprint_provided?
-        # This 0.04 is the corp margin on internal/corp ship sales.
-        purchase_price_metadata["ShipBlueprintSellPrice"].to_f * 0.04
-      else
-        0
-      end
-      # For AL purchases, we can use the CorpMemberSaleCorpMargin
-      # which is just taking the corp member sale price (already has contract
-      # fee removed) minus the break even sale price
-      purchase_price_metadata["CorpMemberSaleCorpMargin"].to_f - bp_reduction
+    if !corp_stock.ship? && corp_or_alliance == :alliance
+      margin_percent = 0
+    elsif (!corp_stock.ship? && corp_or_alliance == :corp) || corp_or_alliance == :total
+      margin_percent = 1
     end
+
+    bp_reduction = if blueprint_provided?
+      # If customer is providing BP, we also need to reduce the calculated profit margin to
+      # exclude the value from the bp.
+      purchase_price_metadata["ShipBlueprintSellPrice"].to_f * settings[buyer_type == :external ? :external_ship_profit_margin : :corp_member_ship_profit_margin]
+    else
+      0
+    end
+
+    alliance_contract_multiplier = if corp_or_alliance == :alliance && corp_stock.ship?
+      # Contracts sent to someone with only isk will immediately charge _you_ 4%,
+      # so we have to reduce the contract sent by 4%
+      1 - (1 - settings[:contract_multiplier]) / 2
+    else
+      1
+    end
+    (purchase_price_metadata["#{buyer_type.to_s.capitalize}SaleTotalMargin"].to_f - bp_reduction) * margin_percent * alliance_contract_multiplier
   end
 
   def blueprint_price_reduction
@@ -83,10 +87,9 @@ class LineItem < ApplicationRecord
       purchase_price_metadata["ShipBlueprintSellPrice"].to_f
     end
 
-    sale_modifier = (order.corp_member? ? 1.04 : 1.08)
-    contract_modifier = (order.corp_member? ? 1 : 0.92)
+    contract_modifier = (order.corp_member? ? 1 : settings[:contract_multiplier])
 
-    return (bp_raw_cost * sale_modifier / contract_modifier)
+    return (bp_raw_cost / contract_modifier)
   end
 
   private

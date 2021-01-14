@@ -1,4 +1,5 @@
 class Order < ApplicationRecord
+  belongs_to :setting_data, optional: true
   has_many :line_items, dependent: :destroy, inverse_of: :order
   has_secure_token
   has_secure_token :admin_token
@@ -40,6 +41,10 @@ class Order < ApplicationRecord
     where(status: state)
   end
 
+  def settings
+    @settings ||= (setting_data || SettingData.order(created_at: :asc).first).settings
+  end
+
   def complete!
     line_items.each do |line_item|
       stock = line_item.corp_stock
@@ -79,7 +84,7 @@ class Order < ApplicationRecord
     # I should probably fix this; external orders
     # dont' record contract fee separately, but
     # AL orders do :P
-    contract? ? subtotal : (total * 0.92)
+    contract? ? subtotal : (total * SettingData.contract_multiplier)
   end
 
   def corp_member?
@@ -107,6 +112,10 @@ class Order < ApplicationRecord
     stock_status[:one_out_of_stock]
   end
 
+  def includes_alliance_margin?
+    stock_status[:alliance_margin]
+  end
+
   def any_blueprints_supplied_by_customer?
     stock_status[:bp_supplied]
   end
@@ -121,7 +130,8 @@ class Order < ApplicationRecord
         all_in_stock: true,
         one_in_stock: false,
         one_out_of_stock: false,
-        bp_supplied: false
+        bp_supplied: false,
+        alliance_margin: false
       }
 
       line_items.each do |li|
@@ -133,6 +143,9 @@ class Order < ApplicationRecord
         end
         if li.blueprint_provided?
           status_result[:bp_supplied] = true
+        end
+        if li.corp_stock.ship?
+          status_result[:alliance_margin] = true
         end
       end
       status_result
@@ -163,8 +176,10 @@ class Order < ApplicationRecord
 
     if contract?
       # Sorry I know the spreadsheet has this third value for AL vs ALI pricing, but it's frankly easier to do here
-      self.contract_fee = subtotal * (0.08 / 0.92)
+      self.contract_fee = subtotal * ((1-SettingData[:contract_multiplier]) / SettingData[:contract_multiplier])
     end
+
+    self.setting_data = SettingData.current
   end
 
   # validate

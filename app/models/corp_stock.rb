@@ -24,6 +24,10 @@ class CorpStock < ApplicationRecord
     )
   end
 
+  def material_loss?
+    purchase_price_metadata["MaterialLoss"]
+  end
+
   # Performed every hour via
   # heroku scheduler & the
   # update_prices:go rake task
@@ -44,7 +48,7 @@ class CorpStock < ApplicationRecord
         item_type: item_data["Type"],
         sale_valid: item_data["SaleValid"],
         purchase_price_metadata: item_data[:metadata],
-        visible: true
+        visible: item_data[:metadata]["SaleVisibleOnSite"]
       }
 
       if ENV['FORCE_STOCK_RELOAD'] || stock_last_import_on < stocks_recorded_on
@@ -101,14 +105,14 @@ class CorpStock < ApplicationRecord
 
     bp_raw_cost = purchase_price_metadata["ShipBlueprintSellPrice"].to_f
 
-    sale_modifier = (corp_member_flag ? 1.04 : 1.08)
-    contract_modifier = (corp_member_flag ? 1 : 0.92)
+    contract_modifier = (corp_member_flag ? 1 : SettingData[:contract_multiplier])
 
-    return bp_raw_cost * sale_modifier / contract_modifier
+    return bp_raw_cost / contract_modifier
   end
 
 
   def purchaseable?(corp_member_flag)
+    return false if material_loss?
     # Always buyable if 'sale valid' flag is true
     return true if sale_valid?
 

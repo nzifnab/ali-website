@@ -6,6 +6,10 @@ class PurchasePriceSheet < GoogleSheet
     new.data
   end
 
+  def self.settings
+    new.settings
+  end
+
   def initialize
     super(SHEET_ID)
   end
@@ -22,7 +26,7 @@ class PurchasePriceSheet < GoogleSheet
     names = values_from_named_range("ItemNamesPublic").flatten
     metadata = spreadsheet_service.get_spreadsheet_values(
       @sheet_id,
-      "PurchasePrices!A1:AO",
+      "PurchasePrices!A1:AX",
       date_time_render_option: :formatted_string,
       value_render_option: :unformatted_value
     ).values
@@ -71,4 +75,29 @@ class PurchasePriceSheet < GoogleSheet
       value_render_option: :unformatted_value
     ).values.flatten.first
   end
+
+  def settings
+    result = {}
+
+    [
+      :contract_multiplier,
+      :alliance_profit_percent,
+      :corp_profit_percent,
+
+      :corp_member_other_profit_margin,
+      :corp_member_ship_profit_margin,
+      :external_other_profit_margin,
+      :external_ship_profit_margin,
+    ].each do |setting_name|
+      result[setting_name] = get_val(setting_name.to_s.camelize)
+    end
+
+    result
+  end
+
+    private
+
+      def get_val(range_name)
+        values_from_named_range(range_name).flatten.first
+      end
 end
