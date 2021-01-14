@@ -20,4 +20,8 @@ module OrdersHelper
   def link_to_tracker_spreadsheet
     link_to "View Manufacture Tracker Spreadsheet", "https://docs.google.com/spreadsheets/d/1lX7-5yIHRwQKzHPRY95xbK6t3f7bYJeZDMv3quLlnE0", target: "_blank"
   end
+
+  def display_contract_fee
+    "#{((1 - SettingData[:contract_multiplier]) * 100).round}%"
+  end
 end

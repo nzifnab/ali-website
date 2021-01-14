@@ -120,7 +120,7 @@
               %li
                 You will receive a contract for these items in the amount of #{isk_currency @order.total}
                 - if @order.contract?
-                  , which covers the #{SettingData[:contract_fee] * 100}% broker's fee of #{isk_currency @order.contract_fee}
+                  , which covers the #{display_contract_fee} broker's fee of #{isk_currency @order.contract_fee}
             - else
               %li One or more of these items are out of stock.
               %li Allow some time for the requested items to be manufactured or gathered.
@@ -128,7 +128,7 @@
               %li
                 You will receive a contract for these items in the amount of #{isk_currency @order.total}
                 - if @order.contract?
-                  , which covers the #{SettingData[:contract_fee] * 100}% broker's fee of #{isk_currency @order.contract_fee}
+                  , which covers the #{display_contract_fee} broker's fee of #{isk_currency @order.contract_fee}
     .col-md-1 &nbsp;
 
     .col-md-6.bg-secondary.rounded.border
