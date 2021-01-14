@@ -84,7 +84,7 @@ class Order < ApplicationRecord
     # I should probably fix this; external orders
     # dont' record contract fee separately, but
     # AL orders do :P
-    contract? ? subtotal : (total * SettingData.contract_multiplier)
+    contract? ? subtotal : (total * SettingData[:contract_multiplier])
   end
 
   def corp_member?
