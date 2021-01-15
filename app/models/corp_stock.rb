@@ -25,7 +25,8 @@ class CorpStock < ApplicationRecord
   end
 
   def material_loss?
-    purchase_price_metadata["MaterialLoss"]
+    # Retrievers get sold at a very slight loss sometimes, and that's ok.
+    purchase_price_metadata["MaterialLoss"] && item != "Retriever"
   end
 
   # Performed every hour via

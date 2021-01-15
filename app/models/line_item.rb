@@ -77,7 +77,7 @@ class LineItem < ApplicationRecord
     else
       1
     end
-    (purchase_price_metadata["#{buyer_type.to_s.capitalize}SaleTotalMargin"].to_f - bp_reduction) * margin_percent * alliance_contract_multiplier
+    [0, (purchase_price_metadata["#{buyer_type.to_s.capitalize}SaleTotalMargin"].to_f - bp_reduction) * margin_percent * alliance_contract_multiplier].max
   end
 
   def blueprint_price_reduction
