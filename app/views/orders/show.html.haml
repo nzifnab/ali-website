@@ -205,5 +205,5 @@
             %br
             - @order.line_items.each do |li|
               - if li.alliance_margin?
-                #{li.corp_stock.item}: #{isk_currency(li.profit_margin_for(:alliance) * li.quantity)}
+                #{li.corp_stock.item} x#{li.quantity}: #{isk_currency(li.profit_margin_for(:alliance) * li.quantity)}
                 %br
