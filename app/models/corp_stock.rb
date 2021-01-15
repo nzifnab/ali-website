@@ -112,7 +112,7 @@ class CorpStock < ApplicationRecord
 
 
   def purchaseable?(corp_member_flag)
-    return false if material_loss?
+    return false if material_loss? && !corp_member_flag
     # Always buyable if 'sale valid' flag is true
     return true if sale_valid?
 

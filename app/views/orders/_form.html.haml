@@ -34,7 +34,7 @@
                 = li.check_box :blueprint_provided, disabled: true, style: "display: none;", class: "js-blueprint-checkbox", "data-price-reduction" => li.object.corp_stock.blueprint_price_reduction(corp_member?), "data-force-checked" => li.object.corp_stock.require_blueprint_provided?
                 - if li.object.corp_stock.require_blueprint_provided?
                   = li.hidden_field :blueprint_provided, id: "", value: "1"
-            - elsif li.object.corp_stock.material_loss?
+            - elsif li.object.corp_stock.material_loss? && !corp_member?
               .alert.alert-secondary.alert-sm{data: {toggle: "tooltip"}, title: "Pricing required by OG alliance on this item necessitates that it be made at a loss, and ALI cannot manufacturer it for you. We apologize for this inconvenience."}
                 Item Unavailable
             - elsif li.object.corp_stock.ship?
