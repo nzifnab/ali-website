@@ -51,7 +51,7 @@ class LineItem < ApplicationRecord
     buyer_type = (order.contract? || order.donation?) ? :corp : :external
 
     # Where `buyer_type` is `:corp` or `:external`
-    margin_percent = SettingData["#{corp_or_alliance}_profit_percent"]
+    margin_percent = settings["#{corp_or_alliance}_profit_percent"]
 
     if !corp_stock.ship? && corp_or_alliance == :alliance
       margin_percent = 0
