@@ -37,6 +37,9 @@
             - elsif li.object.corp_stock.material_loss? && !corp_member?
               .alert.alert-secondary.alert-sm{data: {toggle: "tooltip"}, title: "Pricing required by OG alliance on this item necessitates that it be made at a loss, and ALI cannot manufacturer it for you. We apologize for this inconvenience."}
                 Item Unavailable
+            - elsif !li.object.corp_stock.price_up_to_date?
+              .alert.alert-secondary.alert-sm{data: {toggle: "tooltip"}, title: "The pricing on this item may be out of date. Contact us to make it available for purchase."}
+                Pricing Out of Date
             - elsif li.object.corp_stock.ship?
               .alert.alert-secondary.alert-sm{data: {toggle: "tooltip"}, title: "This item is out of stock or the cost or blueprint price is unknown or out of date. Contact us for pricing information or inquiries."}
                 = link_to "Contact us", Rails.application.config.discord_invite_link, class: "alert-link"
