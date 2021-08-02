@@ -197,13 +197,3 @@
               = render partial: "line_items/fulfillment_table", locals: {order: @order}
           .mb-3
         %li Once complete, mark the order as complete via the admin interface, and mark the order post with a :white_check_mark emoji. (better admin and order status functionality coming soon).
-
-        - if @order.includes_alliance_margin?
-          %li
-            Some items are eligible for alliance profit margin. Please copy-paste the following lines into the <code>#alliance-ship-margin-log</code> discord channel:
-            %br
-            %br
-            - @order.line_items.each do |li|
-              - if li.alliance_margin?
-                #{li.corp_stock.item} x#{li.quantity}: #{isk_currency(li.profit_margin_for(:alliance) * li.quantity)}
-                %br
