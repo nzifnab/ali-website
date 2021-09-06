@@ -1,0 +1,21 @@
+.col-md-5.bg-secondary.rounded.border
+  .mb-4
+    %h3.text-center Customer
+
+    %ul
+      - if order.donation?
+        %li Donate #{isk_currency order.total} ISK to the AL wallet.
+        %li
+          Post a screenshot of your donation and the
+          = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
+          to this order in the <code>##{Rails.application.config.order_discord_channel}</code> discord channel.
+      - else
+        %li
+          Post a
+          = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
+          to this order in the
+          %code= Rails.application.config.order_discord_channel
+          discord channel
+
+        %li
+          You will receive a contract for #{isk_currency order.total}

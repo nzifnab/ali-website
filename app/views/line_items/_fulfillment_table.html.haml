@@ -1,11 +1,26 @@
-- order.out_of_stock_line_items.each do |line_item|
+-# - order.out_of_stock_line_items.each do |line_item|
+-#   %tr
+-#     %td= line_item.corp_stock.item
+-#     %td
+-#       - if order.donation?
+-#         = isk_currency line_item.donation_sale_manufacturing_withdrawal_fee
+-#       - else
+-#         = isk_currency line_item.profit_margin_for(:total)
+-#     - if !@order.donation?
+-#       %td
+-#         = isk_currency line_item.price_without_contract_fee
+-#
+
+- order.line_items.each do |line_item|
   %tr
     %td= line_item.corp_stock.item
-    %td
-      - if order.donation?
-        = isk_currency line_item.donation_sale_manufacturing_withdrawal_fee
-      - else
-        = isk_currency line_item.profit_margin_for(:total)
-    - if !@order.donation?
+    - if order.donation?
       %td
-        = isk_currency line_item.price_without_contract_fee
+        = isk_currency line_item.donation_sale_personal_manufacture_withdrawal_amount
+      %td
+        = isk_currency line_item.donation_sale_corp_manufacture_withdrawal_amount
+    - else
+      %td
+        = isk_currency line_item.contract_sale_personal_manufacture_donate_amount
+      %td
+        = isk_currency line_item.contract_sale_corp_manufacture_withdrawal_amount

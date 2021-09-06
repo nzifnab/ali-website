@@ -1,4 +1,7 @@
 class OrdersController < ApplicationController
+  include ActionView::Helpers::NumberHelper
+  include OrdersHelper
+
   def new
     @order = Order.order_for_form(!corp_member?)
   end
@@ -6,12 +9,14 @@ class OrdersController < ApplicationController
   def show
     @order = Order.get(params[:id])
 
-    if params[:token] == @order.admin_token && params[:token].present?
-      # TODO: use discord authentication here instead?
-      # right now the only functionality is completing the order
-      # (tho it also updates corp stock)
-      @admin = true
+    @admin = true
+
+    @og_title = "Order for #{isk_currency(@order.total)} isk"
+    desc = []
+    @order.line_items.each do |li|
+      desc << "#{li.corp_stock.item} x #{number_with_delimiter(li.quantity)}: #{isk_currency(li.total)}"
     end
+    @og_description = desc.join("\n")
   end
 
   def create
@@ -35,7 +40,7 @@ class OrdersController < ApplicationController
   def destroy
     @order = Order.find(params[:id])
 
-    if @order.admin_token == params[:token] && params[:token].present? && @order.pending?
+    if @order.pending?
       @order.cancel!
       redirect_to order_path(@order.token, token: @order.admin_token)
     else
@@ -46,7 +51,7 @@ class OrdersController < ApplicationController
   def complete
     @order = Order.find(params[:id])
 
-    if @order.admin_token == params[:token] && params[:token].present? && @order.pending?
+    if @order.pending?
       @order.complete!
       redirect_to order_path(@order.token, token: @order.admin_token)
     else

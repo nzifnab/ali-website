@@ -26,7 +26,7 @@ class PurchasePriceSheet < GoogleSheet
     names = values_from_named_range("ItemNamesPublic").flatten
     metadata = spreadsheet_service.get_spreadsheet_values(
       @sheet_id,
-      "PurchasePrices!A1:AX",
+      "PurchasePrices!A1:AZ",
       date_time_render_option: :formatted_string,
       value_render_option: :unformatted_value
     ).values
@@ -88,6 +88,8 @@ class PurchasePriceSheet < GoogleSheet
       :corp_member_ship_profit_margin,
       :external_other_profit_margin,
       :external_ship_profit_margin,
+
+      :pricing_expiration_duration
     ].each do |setting_name|
       result[setting_name] = get_val(setting_name.to_s.camelize)
     end

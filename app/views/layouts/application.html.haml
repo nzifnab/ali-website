@@ -3,12 +3,19 @@
   %head
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
     %meta{name: "viewport", content: "width=device-width, initial-scale=1.0"}
-    %title= content_for?(:title) ? yield(:title) : "Ascended Lunar Isle"
-    %meta{name: "description", content: content_for?(:description) ? yield(:description) : "Ascended Lunar Isle - An Eve Echoes Nullsec Industrial Corporation"}
+    %title= content_for?(:title) ? yield(:title) : "Ascended Legends"
+    %meta{name: "description", content: content_for?(:description) ? yield(:description) : "Ascended Legends - An Eve Echoes Corporation."}
     %link{rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png"}
     %link{rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png"}
     %link{rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png"}
     %link{rel: "manifest", href: "/site.webmanifest"}
+
+
+    %meta{property: "og:site_name", content: "Ascended Legends"}
+    %meta{property: "og:title", content: @og_title || "An Eve Echoes Corporation"}
+    %meta{property: "og:description", content: @og_description || "Ordering Website for AL"}
+
+
     = csrf_meta_tags
     = csp_meta_tag
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'

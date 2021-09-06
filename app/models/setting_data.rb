@@ -15,7 +15,7 @@ class SettingData < ApplicationRecord
   end
 
   def self.settings
-    @settings ||= current.settings
+    current.settings
   end
 
   def settings

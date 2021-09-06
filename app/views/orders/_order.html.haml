@@ -4,7 +4,7 @@
   %td{style: 'position: relative;'}
     = link_to order_path(order.token), class: "text-light stretched-link" do
       - if order.corp_member_type == "donation"
-        .badge.badge-primary ALI
+        .badge.badge-primary AL
       - elsif order.corp_member_type == "contract"
         .badge.badge-primary AL
       = order.player_name

@@ -1,21 +1,26 @@
 %nav.navbar.navbar-dark.navbar-static-top.navbar-expand-md
   .container
     = link_to root_path, class: "navbar-brand" do
-      Ascended Lunar Isle
+      Ascended Legends
     - if corp_member?
       .badge.badge-primary.d-md-none
-        ALI
+        AL
     %button.navbar-toggler.collapsed{type: "button", data: {toggle: "collapse", target: ".js-navbar-collapse-1", aria_expanded: "false"}}
       %span.navbar-toggler-icon
     .collapse.navbar-collapse.js-navbar-collapse-1
       %ul.nav.navbar-nav.mr-auto
-        %li.nav-item= link_to "Buy From ALI", new_order_path, class: "nav-link"
+        %li.nav-item= link_to "Buy From AL", new_order_path, class: "nav-link"
         %li.nav-item= link_to "Orders", orders_path, class: "nav-link"
         %li.nav-item= link_to "Contact Us", Rails.application.config.discord_invite_link, class: "nav-link", target: "_blank"
+
+        - if corp_member?
+          %li.nav-item= link_to "Switch to Alliance View", new_order_path(corp_member: "alliance"), class: "nav-link"
+        - else
+          %li.nav-item= link_to "Switch to Corp View", new_order_path(corp_member: Rails.application.config.corp_member_token), class: "nav-link"
 
 
 
     - if corp_member?
       .badge.badge-primary.d-none.d-md-block
-        ALI
+        AL
         %span.d-none.d-lg-inline Member

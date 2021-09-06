@@ -34,16 +34,36 @@ class LineItem < ApplicationRecord
     corp_stock.ship?
   end
 
-  # For ALI purchases where funds were donated to corp wallet,
+  # For Corp  purchases where funds were donated to corp wallet,
   # this is the amount of money the builder should withdraw from corp, given
   # they manufactured this item and contracted it direct to consumer.
-  def donation_sale_manufacturing_withdrawal_fee
+  # def donation_sale_manufacturing_withdrawal_fee
+  #   bp_reduction = if blueprint_provided?
+  #     purchase_price_metadata["ShipBlueprintSellPrice"].to_f
+  #   else
+  #     0
+  #   end
+  #   purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
+  # end
+  def donation_sale_personal_manufacture_withdrawal_amount
     bp_reduction = if blueprint_provided?
       purchase_price_metadata["ShipBlueprintSellPrice"].to_f
     else
       0
     end
     purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
+  end
+
+  def donation_sale_corp_manufacture_withdrawal_amount
+    purchase_price_metadata["CorpMemberProfitAmount"].to_f
+  end
+
+  def contract_sale_personal_manufacture_donate_amount
+    profit_margin_for(:total)
+  end
+
+  def contract_sale_corp_manufacture_withdrawal_amount
+    purchase_price_metadata["CorpMemberProfitAmount"].to_f
   end
 
 

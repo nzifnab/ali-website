@@ -1,6 +1,7 @@
 module OrdersHelper
   def isk_currency(val, include_decimals = false)
     precision = (include_decimals ? 2 : 0)
+    val ||= 0
     if val >= 100_000
       precision = 0
     end
@@ -15,10 +16,6 @@ module OrdersHelper
     elsif order.cancelled?
       "badge-danger"
     end
-  end
-
-  def link_to_tracker_spreadsheet
-    link_to "View Manufacture Tracker Spreadsheet", "https://docs.google.com/spreadsheets/d/1lX7-5yIHRwQKzHPRY95xbK6t3f7bYJeZDMv3quLlnE0", target: "_blank"
   end
 
   def display_contract_fee

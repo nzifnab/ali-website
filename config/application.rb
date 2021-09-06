@@ -34,5 +34,6 @@ module AliWebsite
     config.ali_market_sheet_id = ENV['MARKET_SHEET_ID']
     config.discord_invite_link = ENV['DISCORD_LINK']
     config.corp_member_token = ENV['CORP_MEMBER_TOKEN']
+    config.order_discord_channel = ENV["ORDER_DISCORD_CHANNEL"] || "MISSING: {ORDER_DISCORD_CHANNEL}"
   end
 end

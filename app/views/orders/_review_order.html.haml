@@ -44,10 +44,12 @@
           .form-group.alert.alert-warning
             .form-check
               = f.radio_button :corp_member_type, "contract", required: true, class: "form-check-input js-option-contract-fee"
-              = f.label :corp_member_type, "I am a member of Ascended Legends or would prefer to <strong>contract</strong> the isk to reduce audit timers.".html_safe, value: "contract"
+              = f.label :corp_member_type, "Purchase Via Contract (8% contract fee applied)"
+              -# = f.label :corp_member_type, "I am a member of Ascended Legends or would prefer to <strong>contract</strong> the isk to reduce audit timers.".html_safe, value: "contract"
             .form-check
               = f.radio_button :corp_member_type, "donation", required: true, class: "form-check-input js-option-no-contract-fee"
-              = f.label :corp_member_type, "I am a member of Ascended Lunar Isle, and can <strong>donate</strong> isk to corp wallet, but may incur audit timers.".html_safe, value: "donation"
+              = f.label :corp_member_type, "Purchase Via Corp Wallet"
+              -# = f.label :corp_member_type, "I am a member of Ascended Lunar Isle, and can <strong>donate</strong> isk to corp wallet, but may incur audit timers.".html_safe, value: "donation"
 
         .js-contract-fee-table{class: (f.object.corp_member_type == "contract" ? "" : "d-none")}
           .table-responsive

@@ -6,7 +6,4 @@ Rails.application.routes.draw do
       post 'complete'
     end
   end
-
-  get '/guess' => 'guess#show'
-  post '/guess' => 'guess#create'
 end

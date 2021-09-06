@@ -1,0 +1,67 @@
+.col-md-6.bg-secondary.rounded.border
+  .mb-4
+    %h3.text-center Fulfillment Officer
+
+    - if order.any_blueprints_supplied_by_customer?
+      %li
+        %string Collect all blueprints from customer.
+    %li
+      Mark the post in the #{Rails.application.config.order_discord_channel}
+      with a :notepad_spiral emoji to claim the order.
+
+    %li
+      For in-stock items, verify the purchase and do a corporation contract for
+      - if order.donation?
+        free
+      - else
+        = isk_currency order.total
+      to
+      = link_to order.player_name, "#", data: {clipboard_target: ".js-copy-player-name"}, class: "js-copy-player-name"
+
+    %li
+      For items built on-demand, use the following table to
+      - if order.donation?
+        determine how much isk to withdraw from corp for manufacturing services.
+      - else
+        determine how much isk to donate to corp wallet (or withdraw, if this was a corp manu job).
+    %br
+    %p
+      Note: Use the "As Personal Manufacture" column if you manufactured the items
+      from your own hangar using personal resources, and "As Corporation Manufacture" column
+      if you manufactured the items using corporation manufacture jobs (using corp resources).
+    .mb-3
+    %table.table.table-striped.text-light
+      %thead
+        %tr
+          %th Item
+          - if order.donation?
+            %th
+              Withdraw
+              %br
+              As Personal
+              %br
+              Manufacture
+            %th
+              Withdraw
+              %br
+              As Corporation
+              %br
+              Manufacture
+          - else
+            %th
+              Donate
+              %br
+              As Personal
+              %br
+              Manufacture
+            %th
+              Withdraw
+              %br
+              As Corporation
+              %br
+              Manufacture
+      %tbody
+        = render partial: "line_items/fulfillment_table", locals: {order: order}
+
+    .mb-3
+    %li Once complete, mark the order complete, and mark the order post with a :white_check_mark emoji.

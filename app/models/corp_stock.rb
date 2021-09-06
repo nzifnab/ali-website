@@ -7,7 +7,11 @@ class CorpStock < ApplicationRecord
     # In case we later decide
     # not everything here should be listed
     # on the form.
-    where(visible: true).order(id: :asc)
+    result = order(id: :asc)
+    unless ENV['ALL_ITEMS_VISIBLE']
+      result = result.where(visible: true)
+    end
+    result
   end
 
   def self.last_imported_on
@@ -27,6 +31,10 @@ class CorpStock < ApplicationRecord
   def material_loss?
     # Retrievers get sold at a very slight loss sometimes, and that's ok.
     purchase_price_metadata["MaterialLoss"] && item != "Retriever"
+  end
+
+  def visible
+    ENV['ALL_ITEMS_VISIBLE'] || super
   end
 
   # Performed every hour via
@@ -89,16 +97,24 @@ class CorpStock < ApplicationRecord
     item_type == "Blueprint" && ["Rattlesnake Blueprint", "Machariel Blueprint", "Bhaalgorn Blueprint", "Nestor Blueprint", "Barghest Blueprint", "Nightmare Blueprint", "Vindicator Blueprint"].include?(item)
   end
 
+  def faction?
+    ["Ship-FF", "Ship-FC", "Ship-FBS"].include?(item_type)
+  end
+
+  def faction_blueprint?
+    item_type == "Blueprint" && ["Rattlesnake Blueprint", "Machariel Blueprint", "Bhaalgorn Blueprint", "Nestor Blueprint", "Barghest Blueprint", "Nightmare Blueprint", "Vindicator Blueprint", "Worm Blueprint", "Dramiel Blueprint", "Cruor Blueprint", "Astero Blueprint", "Garmur Blueprint", "Succubus Blueprint", "Daredevil Blueprint", "Gila Blueprint", "Cynabal Blueprint", "Ashimmu Blueprint", "Stratios Blueprint", "Orthrus Blueprint", "Phantasm Blueprint", "Vigilant Blueprint"].include?(item)
+  end
+
   def resource?
     ["Mineral", "Planetary"].include?(item_type)
   end
 
   def price_up_to_date?
-    7.days.ago < price_updated_on
+    (SettingData[:pricing_expiration_duration].to_f || 7).days.ago < price_updated_on
   end
 
   def require_blueprint_provided?
-    faction_bs? && blueprint.current_stock <= 0
+    faction? && blueprint.current_stock <= 0
   end
 
   def blueprint_price_reduction(corp_member_flag)
@@ -129,7 +145,7 @@ class CorpStock < ApplicationRecord
     # request.
     # This doesn't apply to datacores/debris, as those can be harder to gather
     # on-demand.
-    return true if corp_member_flag && (blueprint? || resource?) && price_up_to_date? && !faction_bs_blueprint?
+    return true if corp_member_flag && (blueprint? || resource?) && price_up_to_date? && !faction_blueprint?
 
 
     false
