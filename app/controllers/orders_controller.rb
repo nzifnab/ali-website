@@ -34,7 +34,7 @@ class OrdersController < ApplicationController
     @status = params[:status]
     @status ||= "pending"
 
-    @orders = Order.filter(@status).preload(:line_items).order(id: :asc)
+    @orders = Order.filter(@status).preload(:line_items).order(created_at: :desc)
   end
 
   def destroy
