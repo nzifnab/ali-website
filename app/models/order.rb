@@ -182,6 +182,7 @@ class Order < ApplicationRecord
       # Sorry I know the spreadsheet has this third value for AL vs ALI pricing, but it's frankly easier to do here
       self.contract_fee = subtotal * ((1-SettingData[:contract_multiplier]) / SettingData[:contract_multiplier])
     end
+    self.tip = 0 if tip.blank?
 
     self.setting_data = SettingData.current
   end

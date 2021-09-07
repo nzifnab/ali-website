@@ -13,7 +13,9 @@
 
 - order.line_items.each do |line_item|
   %tr
-    %td= line_item.corp_stock.item
+    %td
+      = line_item.corp_stock.item
+      x#{number_with_delimiter(line_item.quantity)}
     - if order.donation?
       %td
         = isk_currency line_item.donation_sale_personal_manufacture_withdrawal_amount
