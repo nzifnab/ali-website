@@ -24,3 +24,15 @@
         = isk_currency line_item.contract_sale_personal_manufacture_donate_amount
       %td
         = isk_currency line_item.contract_sale_corp_manufacture_withdrawal_amount
+%tr
+  %td Tip From Customer
+  - if order.donation?
+    %td
+      = isk_currency order.tip
+    %td
+      = isk_currency order.tip
+  - else
+    %td
+      = isk_currency 0
+    %td
+      = isk_currency order.tip_after_contract_fee

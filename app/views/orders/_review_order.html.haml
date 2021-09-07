@@ -11,6 +11,9 @@
           = f.label :player_name, "In-Game Name (*)"
           = f.text_field :player_name, class: "form-control js-player-name", required: true
 
+        .form-group
+          = f.label :tip, "Tip"
+          = f.text_field :tip, class: "form-control js-tip"
 
         .table-responsive
           %table.table.table-dark.table-hover
@@ -51,16 +54,19 @@
               = f.label :corp_member_type, "Purchase Via Corp Wallet"
               -# = f.label :corp_member_type, "I am a member of Ascended Lunar Isle, and can <strong>donate</strong> isk to corp wallet, but may incur audit timers.".html_safe, value: "donation"
 
-        .js-contract-fee-table{class: (f.object.corp_member_type == "contract" ? "" : "d-none")}
-          .table-responsive
-            %table.table.table-hover
-              %tbody
-                %tr
-                  %td.text-right Contract Fee:
-                  %td.js-contract-fee-value
-                %tr
-                  %td.text-right Grand Total:
-                  %td.js-contract-fee-final
+
+        .table-responsive
+          %table.table.table-hover
+            %tbody
+              %tr.js-contract-fee-table{class: (f.object.corp_member_type == "contract" ? "" : "d-none")}
+                %td.text-right Contract Fee:
+                %td.js-contract-fee-value
+              %tr
+                %td.text-right Tip:
+                %td.js-modal-tip
+              %tr
+                %td.text-right Grand Total:
+                %td.js-contract-fee-final
 
       .modal-footer
         %button{type: "button", class: "btn btn-secondary", data: {dismiss: "modal"}} Edit Order

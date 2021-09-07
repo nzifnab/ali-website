@@ -118,7 +118,8 @@ CREATE TABLE public.orders (
     admin_token text,
     corp_member_type text DEFAULT 'external'::text NOT NULL,
     contract_fee bigint DEFAULT 0 NOT NULL,
-    setting_data_id bigint
+    setting_data_id bigint,
+    tip numeric(15,2)
 );
 
 
@@ -326,6 +327,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20201209201647'),
 ('20201231213309'),
 ('20210114040329'),
-('20210114094529');
+('20210114094529'),
+('20210906224550');
 
 

@@ -55,16 +55,15 @@
           %div{data: {toggle: "tooltip", placement: "bottom"}, title: "If an item is out of stock, corp will have to manufacture it or otherwise source it."} In stock?
     %tbody
       = render @order.line_items
+      %tr
+        %td &nbsp;
+        %td &nbsp;
+        %td.text-right
+          Subtotal:
+        %td
+          = isk_currency @order.subtotal
+        %td &nbsp;
       - if @order.contract?
-        %tr
-          %td &nbsp;
-          %td &nbsp;
-          %td.text-right
-            Subtotal:
-          %td
-            = isk_currency @order.subtotal
-          %td &nbsp;
-
         %tr
           %td &nbsp;
           %td &nbsp;
@@ -73,6 +72,14 @@
           %td
             = isk_currency @order.contract_fee
           %td &nbsp;
+      %tr
+        %td &nbsp;
+        %td &nbsp;
+        %td.text-right
+          Tip:
+        %td
+          = isk_currency @order.tip
+        %td &nbsp;
       %tr
         %td &nbsp;
         %td &nbsp;
@@ -86,120 +93,3 @@
     = render partial: "orders/customer_instructions", locals: {order: @order}
     .col-md-1 &nbsp;
     = render partial: "orders/fulfillment_instructions", locals: {order: @order}
-
-  -# .row
-  -#   .col-md-5.bg-secondary.rounded.border
-  -#     .mb-4
-  -#       %h3.text-center Customer
--#
-  -#       %ul
-  -#         - if @order.donation?
-  -#           %li Donate #{isk_currency @order.total} ISK to the ALI wallet
-  -#           %li
-  -#             Post a screenshot of your donation and the
-  -#             = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
-  -#             to this order in the <code>#we-sell-contracts</code> discord channel.
-  -#           - if @order.includes_in_stock_items?
-  -#             %li
-  -#               For items that are in stock, an <strong>ALI Officer</strong> will move your items
-  -#               directly to Hangar 3 in YZ-LQL for immediate withdrawal.
-  -#           - if @order.includes_out_of_stock_items?
-  -#             %li
-  -#               For items not in stock, a manufacturer or miner will begin
-  -#               construction of your ships, modules, or rigs, and deposit them
-  -#               into hangar 3 when complete, for withdrawal.
-  -#           %li
-  -#             <em>You will be notified via discord when your item(s) are ready
-  -#             for withdrawal</em>
-  -#         - else
-  -#           %li
-  -#             Post a
-  -#             = link_to "<u>Link</u>".html_safe, '#', data: {clipboard_target: ".js-order-path"}
-  -#             to this order in the
-  -#             - if @order.external?
-  -#               = link_to "<code>#public-chat</code>".html_safe, Rails.application.config.discord_invite_link
-  -#             - else
-  -#               %code #we-sell-contracts
-  -#             discord channel.
-  -#           - if @order.in_stock?
-  -#             %li Everything appears to be in stock
-  -#             %li
-  -#               You will receive a contract for these items in the amount of #{isk_currency @order.total}
-  -#               - if @order.contract?
-  -#                 , which covers the #{display_contract_fee} broker's fee of #{isk_currency @order.contract_fee}
-  -#           - else
-  -#             %li One or more of these items are out of stock.
-  -#             %li Allow some time for the requested items to be manufactured or gathered.
--#
-  -#             %li
-  -#               You will receive a contract for these items in the amount of #{isk_currency @order.total}
-  -#               - if @order.contract?
-  -#                 , which covers the #{display_contract_fee} broker's fee of #{isk_currency @order.contract_fee}
-  -#   .col-md-1 &nbsp;
--#
-  -#   .col-md-6.bg-secondary.rounded.border
-  -#     .mb-4
-  -#       %h3.text-center Fulfillment Officer
-  -#       - if @order.total >= 100_000_000
-  -#         %li Verify the legitimacy of the order with the customer first. (Value > 100m)
-  -#       - if @order.any_blueprints_supplied_by_customer?
-  -#         %li Collect all blueprints indicated in the order from the customer.
-  -#       - if @order.includes_out_of_stock_items?
-  -#         %li
-  -#           Some of these items do not appear to be in stock
-  -#           %ul
-  -#             %li
-  -#               Mark the post in the
-  -#               - if @order.external?
-  -#                 %code #public-chat
-  -#               - else
-  -#                 %code #we-sell-contracts
-  -#               discord channel with a :notepad_spiral emoji to indicate you are working the order. (claiming via the website coming soon)
-  -#             %li
-  -#               Purchase materials necessary for the build on the
-  -#               = link_to "Buy From ALI", new_order_path
-  -#               page. Use the <code>#blueprints-lookup</code> discord channel/bot
-  -#               for a list of materials.
-  -#       - if @order.donation?
-  -#         %li If everything is in stock, verify the donation and then move the purchased items to hangar 3 in 4-EFLU
-  -#         %li Contact the customer on discord in <code>#we-sell-contracts</code> and let them know their item(s) are ready for pickup.
--#
-  -#         - if @order.includes_out_of_stock_items?
-  -#           %li
-  -#             A manufacturer filling this order must have withdrawal access to the corp wallet.
-  -#       - else
-  -#         %li
-  -#           contract the items to
-  -#           = link_to @order.player_name, "#", data: {clipboard_target: ".js-copy-player-name"}, class: "js-copy-player-name"
-  -#           for #{isk_currency @order.total}
-  -#         - unless @order.includes_out_of_stock_items?
-  -#           %li
-  -#             Deposit
-  -#             = isk_currency @order.total_without_contract_fee
-  -#             to the corp wallet (the remainder covers contract fees)
--#
-  -#       - if @order.includes_out_of_stock_items?
-  -#         %li
-  -#           Since some items were out of stock, use the following table to
-  -#           - if @order.donation?
-  -#             determine how much isk to withdraw from corp for your manufacturing services.
-  -#           - else
-  -#             determine how much isk to donate to corp wallet.
-  -#           Be sure to screenshot your transaction and put it in the <code>#we-sell-contracts</code> discord channel.
-  -#         .mb-3
-  -#         %table.table.table-striped.text-light
-  -#           %thead
-  -#             %tr
-  -#               %th Item
-  -#               %th= @order.donation? ? "Withdraw<br>Per Item<br>Manufactured".html_safe : "Donate<br>Per Item<br>(manufactured)".html_safe
-  -#               - if !@order.donation?
-  -#                 %th
-  -#                   Donate
-  -#                   %br
-  -#                   Per Item
-  -#                   %br
-  -#                   (from corp stock)
-  -#           %tbody
-  -#             = render partial: "line_items/fulfillment_table", locals: {order: @order}
-  -#         .mb-3
-  -#       %li Once complete, mark the order as complete via the admin interface, and mark the order post with a :white_check_mark emoji. (better admin and order status functionality coming soon).

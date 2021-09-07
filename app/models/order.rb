@@ -77,7 +77,7 @@ class Order < ApplicationRecord
   end
 
   def total
-    subtotal + contract_fee
+    subtotal + contract_fee + tip.to_f
   end
 
   def total_without_contract_fee
@@ -85,6 +85,10 @@ class Order < ApplicationRecord
     # dont' record contract fee separately, but
     # AL orders do :P
     contract? ? subtotal : (total * SettingData[:contract_multiplier])
+  end
+
+  def tip_after_contract_fee
+    tip * SettingData[:contract_multiplier]
   end
 
   def corp_member?

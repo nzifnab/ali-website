@@ -103,9 +103,11 @@
 
     $(".js-option-contract-fee").on("click", function(e){
       $(".js-contract-fee-table").removeClass("d-none");
+      refreshOrderSummary();
     })
     $(".js-option-no-contract-fee").on("click", function(e){
       $(".js-contract-fee-table").addClass("d-none");
+      refreshOrderSummary();
     })
 
     $(".js-review-order").on("show.bs.modal", function(e){
@@ -113,7 +115,6 @@
 
       $(".js-review-order-body").html("");
       $(".js-modal-stock-warning").hide();
-      var total = 0;
       var stockMissing = false;
 
       $(".js-item-quantity").each(function(){
@@ -140,7 +141,6 @@
           $reviewBlueprintCheckbox.
             prop("checked", true).
             prop("disabled", true)
-          total -= (quantity * Number($baseBlueprintCheckbox.data("price-reduction")));
         }
 
         var displayPrice = (price < 100000 ? formatMoney(price) : formatMoney(price, 0))
@@ -177,18 +177,12 @@
         }
 
         $(".js-review-order-body").append($htmlLine).append($line2);
-
-        total += subtotal;
       });
 
-      $(".js-modal-total").html(formatMoney(total, 0));
       if(stockMissing){
         $(".js-modal-stock-warning").show();
       }
-
-      contractFee = total * (0.08 / 0.92);
-      $(".js-contract-fee-value").text(formatMoney(contractFee, 0));
-      $(".js-contract-fee-final").text(formatMoney(contractFee + total, 0));
+      refreshOrderSummary();
     });
 
     $(".js-review-order").on("change", ".js-blueprint-checkbox", function(e){
@@ -203,18 +197,34 @@
         $(this).closest("tr").data("modal-line-total", 0);
       }
 
-      var total = 0;
-      $(".js-modal-line").each(function(){
-        total += Number($(this).data("modal-line-total"));
-      });
-      $(".js-modal-total").html(formatMoney(total, 0));
-
-      contractFee = total * (0.08 / 0.92);
-      $(".js-contract-fee-value").text(formatMoney(contractFee, 0));
-      $(".js-contract-fee-final").text(formatMoney(contractFee + total, 0));
+      refreshOrderSummary();
     });
+
+    $(".js-tip").on("change", function(e){
+      refreshOrderSummary();
+    })
   });
 })(jQuery);
+
+function refreshOrderSummary() {
+  var total = 0;
+  $(".js-modal-line").each(function(){
+    var lineTotal = Number($(this).data("modal-line-total"));
+    total += lineTotal;
+  })
+  $(".js-modal-total").html(formatMoney(total, 0));
+  tip = Number($(".js-tip").val());
+
+  var contractFee;
+  if($(".js-option-contract-fee").prop("checked")) {
+    contractFee = total * (0.08 / 0.92);
+  } else {
+    contractFee = 0;
+  }
+  $(".js-contract-fee-value").text(formatMoney(contractFee, 0));
+  $(".js-modal-tip").text(formatMoney(tip, 0));
+  $(".js-contract-fee-final").text(formatMoney(contractFee + total + tip, 0));
+}
 
 var prices = {};
 function calculateTotal(initiateFields = false) {

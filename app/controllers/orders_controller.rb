@@ -64,6 +64,7 @@ class OrdersController < ApplicationController
     prm = params.require(:order).permit(
       :player_name,
       :corp_member_type,
+      :tip,
       line_items_attributes: [
         :corp_stock_id,
         :price,

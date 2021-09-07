@@ -37,33 +37,26 @@ class LineItem < ApplicationRecord
   # For Corp  purchases where funds were donated to corp wallet,
   # this is the amount of money the builder should withdraw from corp, given
   # they manufactured this item and contracted it direct to consumer.
-  # def donation_sale_manufacturing_withdrawal_fee
-  #   bp_reduction = if blueprint_provided?
-  #     purchase_price_metadata["ShipBlueprintSellPrice"].to_f
-  #   else
-  #     0
-  #   end
-  #   purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
-  # end
+
   def donation_sale_personal_manufacture_withdrawal_amount
     bp_reduction = if blueprint_provided?
       purchase_price_metadata["ShipBlueprintSellPrice"].to_f
     else
       0
     end
-    purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction
+    quantity * (purchase_price_metadata["BestBuyPriceat0.0Fulfillment"].to_f - bp_reduction)
   end
 
   def donation_sale_corp_manufacture_withdrawal_amount
-    purchase_price_metadata["CorpMemberProfitAmount"].to_f
+    quantity * purchase_price_metadata["CorpMemberProfitAmount"].to_f
   end
 
   def contract_sale_personal_manufacture_donate_amount
-    profit_margin_for(:total)
+    quantity * profit_margin_for(:total)
   end
 
   def contract_sale_corp_manufacture_withdrawal_amount
-    purchase_price_metadata["CorpMemberProfitAmount"].to_f
+    quantity * purchase_price_metadata["CorpMemberProfitAmount"].to_f
   end
 
 
@@ -79,13 +72,6 @@ class LineItem < ApplicationRecord
       margin_percent = 1
     end
 
-    # bp_reduction = if blueprint_provided?
-    #   # If customer is providing BP, we also need to reduce the calculated profit margin to
-    #   # exclude the value from the bp.
-    #   purchase_price_metadata["ShipBlueprintSellPrice"].to_f * settings[buyer_type == :external ? :external_ship_profit_margin : :corp_member_ship_profit_margin]
-    # else
-    #   0
-    # end
     # Since I changed ship sales to not mark up the bp cost with our margins, there is no need to reduce
     # the profit margin based on the bp
     bp_reduction = 0
