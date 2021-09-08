@@ -11,11 +11,13 @@ class OrdersController < ApplicationController
 
     @admin = true
 
-    @og_title = "Order for #{isk_currency(@order.total)} isk"
+    @og_title = "#{@order.player_name} Order ##{@order.id}: #{isk_currency(@order.total)}"
     desc = []
     @order.line_items.each do |li|
-      desc << "#{li.corp_stock.item} x #{number_with_delimiter(li.quantity)}: #{isk_currency(li.total)}"
+      desc << "#{li.corp_stock.item} x #{number_with_delimiter(li.quantity)}: #{isk_currency(li.total - li.blueprint_price_reduction)}"
     end
+    desc << "Contract: #{isk_currency(@order.contract_fee)}" if @order.contract_fee.to_f > 0
+    desc << "Tip: #{isk_currency(@order.tip)}" if @order.tip.to_f > 0
     @og_description = desc.join("\n")
   end
 
