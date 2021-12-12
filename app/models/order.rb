@@ -160,6 +160,10 @@ class Order < ApplicationRecord
     line_items.select(&:pending_stock?)
   end
 
+  def tip=(val)
+    write_attribute(:tip, val.to_s.gsub(/[^0-9]/, ""))
+  end
+
   private
 
   # before_create

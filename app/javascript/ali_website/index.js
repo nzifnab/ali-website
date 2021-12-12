@@ -213,7 +213,7 @@ function refreshOrderSummary() {
     total += lineTotal;
   })
   $(".js-modal-total").html(formatMoney(total, 0));
-  tip = Number($(".js-tip").val());
+  tip = Number($(".js-tip").val().replaceAll(/[^0-9]/g, ""));
 
   var contractFee;
   if($(".js-option-contract-fee").prop("checked")) {

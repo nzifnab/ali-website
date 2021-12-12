@@ -1,6 +1,11 @@
 %h1.text-center.display-3 Order Form
 
 .container
+  - unless corp_member?
+    .alert.alert-danger{role: "alert"}
+      If you are an AL corp member, make sure to
+      = link_to "click here for corp member pricing", new_order_path(corp_member: Rails.application.config.corp_member_token), class: "alert-link"
+
   = form_for @order, html: {class: "js-order-form"} do |f|
     - if @order.errors.any?
       .alert.alert-warning
@@ -13,8 +18,6 @@
     = render partial: 'orders/form', locals: {f: f}
 
     .fixed-actions
-      -# = f.submit "Submit", class: 'btn btn-success', "data-disable-with" => "Please Wait..."
-      -# %span.js-total-price
       %button{type: 'button', class: 'btn btn-success', data: {toggle: "modal", target: ".js-review-order"}}
         Review Order
       %span.js-total-price

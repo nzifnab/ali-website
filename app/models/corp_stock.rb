@@ -114,7 +114,7 @@ class CorpStock < ApplicationRecord
   end
 
   def require_blueprint_provided?
-    faction? && blueprint.current_stock <= 0
+    to_bool(purchase_price_metadata["ForceBlueprint"]) && blueprint.current_stock <= 0
   end
 
   def blueprint_price_reduction(corp_member_flag)
@@ -155,8 +155,11 @@ class CorpStock < ApplicationRecord
   def set_blueprint_id
     return unless ship?
 
-    bp = CorpStock.where(item: "#{item} Blueprint").first_or_initialize(
-      visible: false
+    bp = CorpStock.where(item: "#{item} Blueprint").first_or_create(
+      visible: false,
+      buy_price: 0,
+      corp_member_sale_price: 0,
+      external_sale_price: 0
     )
     self.blueprint_id = bp.id
   end
